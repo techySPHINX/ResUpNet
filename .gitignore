@@ -1,0 +1,65 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.Python
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files
+*.h5
+*.hdf5
+*.keras
+*.ckpt
+*.pt
+*.pth
+*.weights
+*.pkl
+*.pickle
+
+# Model checkpoints
+checkpoints/
+models/
+saved_models/
+*.pb
+
+# Logs
+logs/
+*.log
+tensorboard/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dataset (optional - uncomment if you don't want to track datasets)
+# data/
+# dataset/
+# *.npy
+
+# Temporary files
+tmp/
+temp/
+*.tmp
