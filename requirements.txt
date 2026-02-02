@@ -1,7 +1,9 @@
 # Deep Learning Frameworks
 # Note: Install PyTorch separately with CPU-only to reduce size:
 # pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-tensorflow>=2.10.0,<2.16.0
+# GPU note (recommended on Linux/WSL2):
+#   pip install "tensorflow[and-cuda]>=2.15,<2.16"
+# tensorflow>=2.10.0,<2.16.0
 # torch>=2.0.0
 # torchvision>=0.15.0
 # torchaudio>=2.0.0

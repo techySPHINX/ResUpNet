@@ -88,6 +88,60 @@ The model is trained on the **Brain MRI Segmentation Dataset** (Kaggle 3M):
 - CUDA-capable GPU (recommended, 8GB+ VRAM)
 - 16GB+ RAM for data processing
 
+### GPU Training Notes (Windows / WSL2 / Colab)
+
+- **Google Colab (easiest):** set `Runtime > Change runtime type > GPU`, then run the notebook.
+- **Windows (native):** recent TensorFlow releases do **not** support NVIDIA GPU acceleration on native Windows Python.
+    Use **WSL2 (recommended)** or a Linux machine for TensorFlow GPU training.
+- **WSL2 / Linux:** install TensorFlow with CUDA dependencies via:
+    - `pip install "tensorflow[and-cuda]>=2.15,<2.16"`
+
+To verify TensorFlow sees your GPU:
+
+```python
+import tensorflow as tf
+print(tf.config.list_physical_devices("GPU"))
+```
+
+### WSL2 GPU Setup (Recommended for Windows)
+
+This is the most reliable way to train this TensorFlow model on an NVIDIA GPU from a Windows machine.
+
+1. **Update Windows + enable WSL2**
+    - Install WSL2 and an Ubuntu distro.
+    - In PowerShell (admin):
+      - `wsl --install`
+      - `wsl --set-default-version 2`
+
+2. **Install the NVIDIA Windows driver with WSL support**
+    - Install the latest NVIDIA driver for your GPU from NVIDIA.
+    - Reboot.
+
+3. **Verify GPU is visible inside WSL2**
+    - Open Ubuntu (WSL) and run:
+      - `nvidia-smi`
+    - If this fails, fix the driver/WSL setup before continuing.
+
+4. **Create a Python environment in WSL2 and install deps**
+    - From your repo folder inside WSL2 (recommended: clone the repo in WSL2, or open it via `/mnt/c/...`):
+      - `python3 -m venv .venv`
+      - `source .venv/bin/activate`
+      - `pip install -U pip`
+      - `pip install -r requirements.txt`
+      - `pip install "tensorflow[and-cuda]>=2.15,<2.16"`
+
+5. **Run the notebook in WSL2**
+    - Option A (VS Code recommended): install the **Remote - WSL** extension, then:
+      - `code .` from inside WSL2
+      - Select the WSL Python interpreter (`.venv`)
+      - Run `lggsegment_cpu.ipynb`
+    - Option B (browser Jupyter):
+      - `pip install jupyter`
+      - `jupyter notebook`
+
+6. **Confirm TensorFlow sees the GPU**
+    - In the notebook, the TensorFlow GPU cell should print a non-empty GPU list.
+
 ### Installation
 
 1. **Clone the repository**
@@ -132,10 +186,10 @@ y_test = np.load('processed_splits/y_test.npy')
 
 #### Option 2: Full Training Pipeline
 
-Open and run `lggsegment.ipynb` in Jupyter Notebook or Google Colab:
+Open and run `lggsegment_cpu.ipynb` in Jupyter Notebook or Google Colab:
 
 ```bash
-jupyter notebook lggsegment.ipynb
+jupyter notebook lggsegment_cpu.ipynb
 ```
 
 The notebook includes:
