@@ -1,36 +1,42 @@
-# Deep Learning Frameworks
-# Note: Install PyTorch separately with CPU-only to reduce size:
-# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-# GPU note (recommended on Linux/WSL2):
-#   pip install "tensorflow[and-cuda]>=2.15,<2.16"
-# tensorflow>=2.10.0,<2.16.0
-# torch>=2.0.0
-# torchvision>=0.15.0
-# torchaudio>=2.0.0
+# =========================
+# Deep Learning (PyTorch)
+# =========================
+# IMPORTANT:
+# - torch is installed separately (nightly cu124)
+# - DO NOT install torch/torchvision/torchaudio here
 
-# Computer Vision & Image Processing
-opencv-python>=4.7.0,<5.0.0
-scikit-image>=0.20.0,<0.23.0
-Pillow>=9.4.0,<11.0.0
+# =========================
+# Computer Vision
+# =========================
+opencv-python==4.9.0.80
+scikit-image==0.22.0
+Pillow==10.2.0
 
-# Numerical Computing & Scientific Libraries
-numpy>=1.23.0,<2.0.0
-scipy>=1.10.0,<2.0.0
+# =========================
+# Numerical & Scientific
+# =========================
+numpy==1.26.4
+scipy==1.11.4
 
-# Machine Learning & Data Processing
-scikit-learn>=1.2.0,<2.0.0
-pandas>=1.5.0,<3.0.0
+# =========================
+# Machine Learning
+# =========================
+scikit-learn==1.4.0
+pandas==2.2.0
 
+# =========================
 # Visualization
-matplotlib>=3.6.0,<4.0.0
-seaborn>=0.12.0,<1.0.0
+# =========================
+matplotlib==3.8.3
+seaborn==0.13.2
 
+# =========================
 # Utilities
-tqdm>=4.65.0
+# =========================
+tqdm==4.66.1
 
-# Jupyter Support (for running notebooks)
-ipykernel>=6.20.0
-jupyter>=1.0.0
-
-# Note: google.colab is only available in Google Colab environment
-# and does not need to be installed locally
+# =========================
+# Jupyter / VS Code
+# =========================
+ipykernel==6.29.2
+jupyter==1.0.0
