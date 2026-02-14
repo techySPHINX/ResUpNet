@@ -1,0 +1,85 @@
+# ========================================
+# BraTS ResUpNet Requirements
+# Medical Research-Grade Brain Tumor Segmentation
+# ========================================
+
+# ----------------------------------------
+# Core Deep Learning (with GPU support)
+# ----------------------------------------
+tensorflow>=2.13.0,<2.16.0       # Core framework with automatic GPU detection
+# Note: TensorFlow 2.13+ includes better GPU support and auto-detection
+
+# ----------------------------------------
+# Medical Imaging & NIfTI Support
+# ----------------------------------------
+nibabel>=5.0.0                   # Essential: NIfTI file loading for BraTS
+pydicom>=2.3.0                   # DICOM support (optional)
+SimpleITK>=2.2.0                 # Advanced medical image processing (optional)
+
+# ----------------------------------------
+# Computer Vision & Image Processing
+# ----------------------------------------
+opencv-python>=4.7.0             # Image resizing, augmentation, transformations
+scikit-image>=0.20.0             # Medical image metrics, morphology operations
+Pillow>=9.4.0                    # Image I/O and basic processing
+
+# ----------------------------------------
+# Data Manipulation & ML
+# ----------------------------------------
+numpy>=1.23.0,<2.0.0             # Array operations (compatible with TF)
+pandas>=1.5.0                    # Data organization and patient info tracking
+scikit-learn>=1.2.0              # Train/test split, metrics, preprocessing
+scipy>=1.10.0                    # Distance metrics (HD95, ASD)
+
+# ----------------------------------------
+# Visualization & Plotting
+# ----------------------------------------
+matplotlib>=3.6.0                # Essential plotting library
+seaborn>=0.12.0                  # Statistical and medical visualizations
+plotly>=5.13.0                   # Interactive plots (optional but recommended)
+
+# ----------------------------------------
+# Progress & Logging
+# ----------------------------------------
+tqdm>=4.64.0                     # Progress bars for data loading and training
+
+# ----------------------------------------
+# Jupyter Environment
+# ----------------------------------------
+jupyter>=1.0.0
+ipykernel>=6.20.0
+notebook>=6.5.0
+ipywidgets>=8.0.0                # Interactive widgets for notebooks
+
+# ----------------------------------------
+# Utilities & Configuration
+# ----------------------------------------
+pyyaml>=6.0                      # Configuration file support
+h5py>=3.8.0                      # Model saving/loading
+protobuf>=3.19.0,<4.0.0          # TensorFlow compatibility
+
+# ----------------------------------------
+# Medical Research Metrics (Advanced)
+# ----------------------------------------
+# Uncomment for advanced medical metrics
+# medpy>=0.4.0                   # Medical image processing and metrics
+# surface-distance>=0.1.0        # Surface distance metrics (HD95, ASD)
+
+# ----------------------------------------
+# Development & Testing (Optional)
+# ----------------------------------------
+pytest>=7.2.0                    # Unit testing framework
+black>=23.1.0
+flake8>=6.0.0
+
+# Data download utilities
+kaggle>=1.5.0                     # For Kaggle dataset download
+synapseclient>=2.7.0              # For official BraTS download
+
+# Note: Install TensorFlow with CUDA support for GPU:
+# Windows/Linux: pip install "tensorflow[and-cuda]>=2.15,<2.16"
+# 
+# For CPU-only (simpler but slower):
+# pip install tensorflow>=2.10.0,<2.16.0
+#
+# Verify GPU: python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
