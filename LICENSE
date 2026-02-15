@@ -1,0 +1,219 @@
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
+
+ResUpNet: Advanced Residual Attention U-Net for Brain MRI Tumor Segmentation
+
+Copyright (c) 2026 Jagan Kumar Hotta. All Rights Reserved.
+
+================================================================================
+IMPORTANT - READ CAREFULLY
+================================================================================
+
+This Proprietary Software License Agreement ("Agreement") is a legal agreement
+between you (either an individual or a single entity) and Jagan Kumar Hotta
+("Licensor") for the software product identified above, which includes computer
+software, associated media, printed materials, and electronic documentation
+(collectively, the "Software").
+
+BY ACCESSING, DOWNLOADING, INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE,
+YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO
+THE TERMS OF THIS AGREEMENT, DO NOT INSTALL, COPY, OR USE THE SOFTWARE.
+
+================================================================================
+
+1. # GRANT OF LICENSE
+
+1.1 Personal and Educational Use
+Subject to the terms and conditions of this Agreement, Licensor grants you a
+limited, non-exclusive, non-transferable, revocable license to use the Software
+solely for:
+(a) Personal learning and skill development purposes
+(b) Educational use in academic courses (teaching/learning only)
+(c) Non-commercial experimentation and evaluation
+
+1.2 Restrictions on Use
+The following activities are STRICTLY PROHIBITED without obtaining a separate
+written commercial license from Licensor:
+
+(a) COMMERCIAL USE: Using the Software or any derivative works in any
+commercial product, service, or business operation
+
+(b) RESEARCH PUBLICATION: Publishing, submitting, or including results,
+findings, methods, or implementations derived from the Software in: - Academic papers, journals, or conference proceedings - Technical reports or white papers - Dissertations or theses (without prior authorization) - Pre-print servers (arXiv, bioRxiv, etc.)
+
+(c) PATENT CLAIMS: Filing patents or intellectual property claims based on
+or derived from the Software, its architecture, methods, or algorithms
+
+(d) COMPETITIVE USE: Using the Software to develop competing products or
+services in the medical imaging, computer vision, or AI/ML domains
+
+(e) REDISTRIBUTION: Distributing, sublicensing, selling, leasing, renting,
+or otherwise transferring the Software to third parties
+
+(f) DERIVATIVE WORKS: Creating, distributing, or commercializing modified
+versions or derivative works based on the Software
+
+(g) REMOVAL OF ATTRIBUTION: Removing, obscuring, or altering any copyright
+notices, license information, or attribution statements
+
+# ================================================================================ 2. INTELLECTUAL PROPERTY RIGHTS
+
+2.1 Ownership
+The Software, including all code, algorithms, architectures, designs,
+documentation, and associated intellectual property rights, is and shall remain
+the exclusive property of Licensor. This Agreement does not convey any ownership
+rights to you.
+
+2.2 Trade Secrets
+The Software contains proprietary information and trade secrets of Licensor.
+You agree to maintain the confidentiality of any non-public aspects of the
+Software and not to disclose such information to third parties.
+
+2.3 Copyright Protection
+This Software is protected by copyright laws and international copyright
+treaties, as well as other intellectual property laws and treaties. Unauthorized
+reproduction or distribution is subject to civil and criminal penalties.
+
+# ================================================================================ 3. RESTRICTIONS AND LIMITATIONS
+
+3.1 Technical Restrictions
+You may NOT:
+
+- Reverse engineer, decompile, or disassemble the Software
+- Remove or bypass any technical protection measures
+- Extract algorithms, model architectures, or training methodologies for
+  independent implementation
+- Use the Software to train competing models or architectures
+- Benchmark the Software against commercial products without authorization
+
+  3.2 Attribution Requirements
+  If you are authorized to reference the Software in permitted contexts, you MUST:
+
+- Provide clear attribution to Licensor
+- Include the original copyright notice
+- Link to the official repository
+- NOT imply endorsement by Licensor
+
+# ================================================================================ 4. COMMERCIAL LICENSE REQUIREMENTS
+
+4.1 Licensing for Prohibited Uses
+To engage in any activities listed in Section 1.2, you must:
+
+- Contact Licensor to negotiate a commercial license
+- Obtain explicit written permission before use
+- Execute a separate licensing agreement
+- Pay applicable licensing fees
+
+  4.2 Research Publication License
+  Academic researchers wishing to publish results must:
+
+- Contact Licensor at least 60 days before submission
+- Provide draft manuscript for review
+- Obtain written authorization
+- Include required acknowledgments and citations
+- Execute a research publication agreement
+
+Contact for Licensing: [your-email@example.com]
+
+# ================================================================================ 5. WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR ACCURACY.
+
+LICENSOR DOES NOT WARRANT THAT:
+
+- The Software will meet your requirements
+- The Software will be error-free or uninterrupted
+- Results from the Software will be accurate or reliable
+- Any defects in the Software will be corrected
+
+THE SOFTWARE IS NOT INTENDED FOR USE IN CLINICAL DIAGNOSIS, PATIENT CARE, OR
+ANY LIFE-CRITICAL APPLICATIONS. USE IN SUCH CONTEXTS IS STRICTLY PROHIBITED
+AND AT YOUR OWN RISK.
+
+# ================================================================================ 6. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT,
+OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES
+FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS
+INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR
+INABILITY TO USE THE SOFTWARE, EVEN IF LICENSOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+LICENSOR'S TOTAL LIABILITY UNDER THIS AGREEMENT SHALL NOT EXCEED THE AMOUNT
+PAID BY YOU FOR THE SOFTWARE LICENSE (IF ANY).
+
+# ================================================================================ 7. TERMINATION
+
+7.1 Automatic Termination
+This license is effective until terminated. Your rights under this Agreement
+will terminate automatically without notice if you fail to comply with any
+term of this Agreement.
+
+7.2 Effect of Termination
+Upon termination, you must:
+
+- Immediately cease all use of the Software
+- Destroy all copies of the Software in your possession
+- Delete all derivative works or modifications
+- Provide written certification of compliance upon request
+
+  7.3 Survival
+  Sections 2 (Intellectual Property), 5 (Warranty Disclaimer), 6 (Limitation
+  of Liability), and 8 (General Provisions) shall survive termination.
+
+# ================================================================================ 8. GENERAL PROVISIONS
+
+8.1 Governing Law
+This Agreement shall be governed by and construed in accordance with the laws
+of India, without regard to its conflict of law provisions.
+
+8.2 Dispute Resolution
+Any disputes arising from this Agreement shall be resolved through binding
+arbitration in Odisha, India, with the prevailing party entitled to
+recover reasonable attorneys' fees.
+
+8.3 Entire Agreement
+This Agreement constitutes the entire agreement between you and Licensor
+regarding the Software and supersedes all prior agreements, communications,
+and understandings.
+
+8.4 Severability
+If any provision of this Agreement is held to be invalid or unenforceable,
+the remaining provisions shall remain in full force and effect.
+
+8.5 No Waiver
+Failure by Licensor to enforce any provision of this Agreement shall not be
+deemed a waiver of future enforcement of that or any other provision.
+
+8.6 Assignment
+You may not assign or transfer this Agreement or any rights granted hereunder
+without prior written consent of Licensor.
+
+8.7 Export Compliance
+You agree to comply with all applicable export laws and regulations regarding
+the Software and any technical data associated with it.
+
+# ================================================================================ 9. ACKNOWLEDGMENT
+
+BY USING THIS SOFTWARE, YOU ACKNOWLEDGE THAT:
+
+1. You have read and understood this Agreement
+2. You agree to be bound by its terms and conditions
+3. You understand that unauthorized use may result in legal action
+4. You will contact Licensor for any uses requiring commercial licensing
+5. You accept full responsibility for ensuring compliance
+
+For questions, licensing inquiries, or permissions, contact:
+
+Jagan Kumar Hotta
+jaganhotta357@outlook.com
+GitHub: @techySphinx
+https://github.com/techySphinx
+
+================================================================================
+
+Version 1.0 | Effective Date: January 31, 2026
+Last Updated: January 31, 2026
+
+All Rights Reserved.
