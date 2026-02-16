@@ -77,3 +77,31 @@ processed_splits_brats/
 tmp/
 temp/
 *.tmp
+
+# Results and outputs
+results/*.csv
+results/*.png
+results/*.jpg
+results/*.pdf
+!results/.gitkeep
+
+# Checkpoints (large model files)
+checkpoints/*.h5
+checkpoints/*.hdf5
+checkpoints/*.keras
+checkpoints/*.weights
+!checkpoints/.gitkeep
+
+# Generated documentation
+docs/_build/
+docs/.doctrees/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Misc
+*.bak
+*.swp
+*~
