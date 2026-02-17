@@ -206,15 +206,18 @@ The notebook now includes:
 | Evaluation             | 5-10 min       | Metrics & visualizations |
 | **Total**              | **~4-7 hours** | **Complete analysis**    |
 
-### Expected Results 🎯
+### Output Generated 📊
 
-| Metric           | Target Range |
-| ---------------- | ------------ |
-| Dice Coefficient | 0.88 - 0.92  |
-| Precision        | 0.86 - 0.92  |
-| Recall           | 0.85 - 0.90  |
-| F1 Score         | 0.86 - 0.91  |
-| Specificity      | 0.95+        |
+The notebook will generate:
+
+- **Quantitative Results**: CSV file with all metrics
+- **Training Curves**: Loss and Dice over epochs
+- **Threshold Analysis**: Metrics vs. threshold plots
+- **ROC & PR Curves**: Classification performance
+- **Segmentation Examples**: Visual results with error maps
+- **Statistical Plots**: Distribution, correlation, Bland-Altman
+
+All results saved for publication and further analysis.
 
 ---
 

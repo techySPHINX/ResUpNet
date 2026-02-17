@@ -21,14 +21,15 @@ You reported:
 
 I've created a complete solution that will achieve **medical research-grade metrics**:
 
-### Expected Improvements
+### Why BraTS Dataset Improves Performance
 
-| Metric    | Current (LGG) | Expected (BraTS) | Improvement |
+| Aspect    | Kaggle LGG | BraTS Dataset | Benefit |
 | --------- | ------------- | ---------------- | ----------- |
-| Dice      | 0.85          | **0.88-0.92**    | +4-7%       |
-| Precision | 0.65-0.75     | **0.86-0.92**    | +21-27% ✅  |
-| Recall    | 0.70-0.80     | **0.85-0.90**    | +15-20% ✅  |
-| F1 Score  | 0.67-0.77     | **0.86-0.91**    | +19-24% ✅  |
+| Annotations | Amateur-labeled | Expert neuroradiologists | Higher quality |
+| Protocol | Variable | Standardized imaging | Consistency |
+| Modalities | Single channel | Multi-modal (T1/T1ce/T2/FLAIR) | Rich features |
+| Task | Fuzzy boundaries | Clear tumor regions | Better training signal |
+| Threshold | Fixed (0.5) | Optimized (validation-based) | Balanced metrics |
 
 ---
 
@@ -365,13 +366,13 @@ No - you need to retrain on BraTS data. Different dataset = different data distr
 
 You'll know it's working when:
 
-1. ✅ Optimal threshold is found (typically 0.35-0.50, not 0.5)
-2. ✅ Dice coefficient > 0.88
-3. ✅ **Precision > 0.85** ← Your main goal
-4. ✅ **Recall > 0.85** ← Your main goal
-5. ✅ **F1 Score > 0.86** ← Your main goal
+1. ✅ Optimal threshold is found (typically 0.35-0.50, not fixed at 0.5)
+2. ✅ Comprehensive metrics computed on test set
+3. ✅ **Strong Precision** (minimizes false positives)
+4. ✅ **Strong Recall** (captures tumor regions)
+5. ✅ **Balanced F1 Score** (precision-recall harmony)
 6. ✅ Graphs show clear precision-recall tradeoff
-7. ✅ Specificity > 0.995
+7. ✅ High Specificity (correctly identifies background)
 
 ---
 

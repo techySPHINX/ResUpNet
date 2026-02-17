@@ -25,20 +25,20 @@ Open **`resunet_brats_medical.ipynb`** and run all cells sequentially.
 
 ## 📓 What You Get
 
-### ✅ Before (LGG Dataset)
+### Comprehensive Metrics Tracking
 
-- Dice: 0.85
-- Precision: 0.65-0.75 ❌
-- Recall: 0.70-0.80 ❌
-- F1: 0.67-0.77 ❌
+The notebook automatically tracks and saves:
 
-### ✅ After (BraTS Dataset + Optimal Threshold)
+- **Dice Coefficient**: Primary overlap metric
+- **IoU**: Intersection over Union
+- **Precision**: Positive predictive value
+- **Recall**: Sensitivity
+- **F1 Score**: Harmonic mean of precision & recall
+- **Specificity**: True negative rate
+- **HD95**: 95th percentile Hausdorff Distance
+- **ASD**: Average Surface Distance
 
-- Dice: **0.88-0.92** ✅
-- Precision: **0.86-0.92** ✅
-- Recall: **0.85-0.90** ✅
-- F1: **0.86-0.91** ✅
-- **Publication Ready!** 🎓
+Results saved to `brats_test_results.csv` for further analysis.
 
 ---
 
@@ -160,10 +160,10 @@ y_pred = (y_prob > optimal_threshold).astype(float)
 After running notebook, you should have:
 
 1. ✅ Optimal threshold found (typically 0.35-0.50)
-2. ✅ Dice > 0.88
-3. ✅ **Precision > 0.85** ← YOUR MAIN GOAL
-4. ✅ **Recall > 0.85** ← YOUR MAIN GOAL
-5. ✅ **F1 > 0.86** ← YOUR MAIN GOAL
+2. ✅ Comprehensive metrics computed (Dice, Precision, Recall, F1, HD95, ASD)
+3. ✅ Strong performance on **Precision** (reduces false alarms)
+4. ✅ Strong performance on **Recall** (captures tumor regions)
+5. ✅ Balanced **F1 Score** (precision-recall harmony)
 6. ✅ 5+ publication-quality figures (300 DPI)
 7. ✅ Results CSV file
 8. ✅ Summary report

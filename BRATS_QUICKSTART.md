@@ -256,30 +256,7 @@ print("="*60)
 
 ---
 
-## 📈 Expected Results with BraTS
-
-### Current (Kaggle LGG Dataset)
-
-| Metric    | Value        |
-| --------- | ------------ |
-| Dice      | 0.85         |
-| Precision | 0.65-0.75 ❌ |
-| Recall    | 0.70-0.80 ❌ |
-| F1        | 0.67-0.77 ❌ |
-
-### Expected (BraTS + Optimal Threshold)
-
-| Metric      | Value              |
-| ----------- | ------------------ |
-| Dice        | **0.88-0.92** ✅   |
-| Precision   | **0.86-0.92** ✅   |
-| Recall      | **0.85-0.90** ✅   |
-| F1          | **0.86-0.91** ✅   |
-| Specificity | **0.995-0.998** ✅ |
-
----
-
-## 🔬 Why BraTS Improves Results
+## Why BraTS Improves Results
 
 1. **Higher Quality Annotations**: Expert neuroradiologists reviewed every scan
 2. **Standardized Protocol**: Consistent imaging parameters across institutions

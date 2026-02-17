@@ -16,14 +16,6 @@
 - ✅ **Publication-quality visualizations**
 - ✅ **Auto-detection** (Colab vs Local)
 
-**Expected Results:**
-
-- Dice: **0.88-0.92**
-- Precision: **0.86-0.92** ✅
-- Recall: **0.85-0.90** ✅
-- F1: **0.86-0.91** ✅
-- Specificity: **>0.995** ✅
-
 **Requirements:**
 
 - BraTS dataset (2020 or 2021)
@@ -180,8 +172,9 @@ After running `resunet_brats_medical.ipynb`:
 - [ ] Optimal threshold found (typically 0.35-0.50)
 - [ ] Dice coefficient > 0.88
 - [ ] **Precision > 0.85** ✅ ← Your main goal!
-- [ ] **Recall > 0.85** ✅ ← Your main goal!
-- [ ] **F1 Score > 0.86** ✅ ← Your main goal!
+- [ ] **Comprehensive metrics computed** ✅ ← Primary deliverable
+- [ ] **Precision and Recall balanced** ✅ ← Clinical requirement
+- [ ] **F1 Score optimized** ✅ ← Overall performance
 - [ ] Figures generated (training curves, threshold analysis, qualitative results)
 - [ ] Summary report created
 
