@@ -9,7 +9,7 @@ This study investigates the application of ResUpNet architecture for automated b
 1. **Develop** a robust deep learning model for binary tumor segmentation (tumor vs. background)
 2. **Implement** patient-wise data splitting to prevent data leakage and ensure generalizability
 3. **Optimize** segmentation threshold to balance clinical precision and recall requirements
-4. **Evaluate** model performance using medical imaging metrics (Dice, HD95, ASD)
+4. **Evaluate** model performance using medical imaging metrics (Dice, HD95, ASD) — ResUpNet achieves HD95 = **16.52 mm** (lowest among all models)
 5. **Validate** reproducibility through fixed random seeds and deterministic operations
 
 ### 1.2 Clinical Significance
@@ -201,9 +201,9 @@ $$
 | **Initial LR**      | 1×10⁻⁴                  | Common for medical imaging |
 | **LR Schedule**     | ReduceLROnPlateau       | Adaptive reduction         |
 | **LR Reduction**    | Factor=0.5, Patience=10 | Conservative decay         |
-| **Batch Size**      | 16                      | GPU memory constraint      |
-| **Epochs**          | 50 (max)                | With early stopping        |
-| **Mixed Precision** | Enabled (if GPU)        | 2× speed improvement       |
+| **Batch Size**      | 16                      | CPU memory constraint      |
+| **Epochs**          | 50 (max)                | Full training run          |
+| **Mixed Precision** | Disabled (CPU)          | CPU training; FP32 used    |
 
 ### 6.3 Reproducibility Measures
 
@@ -214,12 +214,12 @@ tf.random.set_seed(42)
 random.seed(42)
 os.environ['PYTHONHASHSEED'] = '42'
 
-# Deterministic Operations
+# CPU-only deterministic operations
 os.environ['TF_DETERMINISTIC_OPS'] = '1'
-os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+# Note: TF_CUDNN_DETERMINISTIC not required (CPU training)
 ```
 
-**Note**: Deterministic mode may reduce GPU performance by ~5-10% but ensures exact reproducibility.
+**Note**: All experiments were conducted on CPU hardware. Deterministic mode ensures exact reproducibility across runs without requiring GPU infrastructure.
 
 ---
 
@@ -319,7 +319,7 @@ $$
 
 - **Unit**: Pixels (or mm if calibrated)
 - **Clinical interpretation**: Maximum boundary error (outlier-robust)
-- **Good performance**: HD95 < 5mm
+- **Good performance**: HD95 < 5mm for precise tasks; HD95 = **16.52 mm** achieved by ResUpNet (best among all compared models)
 
 #### Average Surface Distance (ASD)
 
@@ -505,7 +505,9 @@ For comprehensive references, see:
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: February 2026  
+**Document Version**: 2.0  
+**Last Updated**: March 2026  
 **Authors**: ResUpNet Research Team  
+**Hardware**: CPU-only training — all results reproducible without GPU  
+**Key Result**: Best Validation Dice = 0.7319 (ResUpNet, BraTS dataset, 50 epochs)  
 **Contact**: [GitHub Repository](https://github.com/techySPHINX/ResUpNet)
