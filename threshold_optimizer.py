@@ -5,9 +5,11 @@ Finds optimal threshold to maximize Dice, F1, or balance Precision/Recall
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import precision_recall_curve, f1_score
-from tqdm import tqdm
+
+try:
+    from tqdm import tqdm
+except ImportError:  # pragma: no cover - optional progress display
+    tqdm = None
 
 
 def dice_score(y_true, y_pred, smooth=1e-6):
@@ -34,11 +36,13 @@ def compute_metrics_at_threshold(y_true_all, y_pred_prob_all, threshold):
     recall = tp / (tp + fn + 1e-8)
     f1 = 2 * precision * recall / (precision + recall + 1e-8)
     specificity = tn / (tn + fp + 1e-8)
+    iou = tp / (tp + fp + fn + 1e-8)
     
     dice = dice_score(y_true_flat, y_pred_flat)
     
     return {
         'dice': dice,
+        'iou': iou,
         'precision': precision,
         'recall': recall,
         'f1': f1,
@@ -88,6 +92,7 @@ def find_optimal_threshold(
     results = {
         'thresholds': [],
         'dice': [],
+        'iou': [],
         'precision': [],
         'recall': [],
         'f1': [],
@@ -95,13 +100,14 @@ def find_optimal_threshold(
         'youden': []  # Youden's J statistic = sensitivity + specificity - 1
     }
     
-    iterator = tqdm(thresholds) if verbose else thresholds
+    iterator = tqdm(thresholds) if verbose and tqdm is not None else thresholds
     
     for thresh in iterator:
         metrics = compute_metrics_at_threshold(y_val, y_pred_prob, thresh)
         
         results['thresholds'].append(thresh)
         results['dice'].append(metrics['dice'])
+        results['iou'].append(metrics['iou'])
         results['precision'].append(metrics['precision'])
         results['recall'].append(metrics['recall'])
         results['f1'].append(metrics['f1'])
@@ -127,6 +133,7 @@ def find_optimal_threshold(
     if verbose:
         print(f"\n✅ Optimal threshold found: {optimal_threshold:.3f}")
         print(f"   Dice: {results['dice'][optimal_idx]:.4f}")
+        print(f"   IoU: {results['iou'][optimal_idx]:.4f}")
         print(f"   F1: {results['f1'][optimal_idx]:.4f}")
         print(f"   Precision: {results['precision'][optimal_idx]:.4f}")
         print(f"   Recall: {results['recall'][optimal_idx]:.4f}")
@@ -139,6 +146,8 @@ def plot_threshold_analysis(results, optimal_threshold, save_path='threshold_ana
     """
     Plot comprehensive threshold analysis
     """
+    import matplotlib.pyplot as plt
+
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
     thresholds = results['thresholds']
@@ -217,7 +226,7 @@ def compare_thresholds(model, X_test, y_test, thresholds=[0.3, 0.4, 0.5, 0.6, 0.
     """
     print(f"\n📊 Comparing {len(thresholds)} thresholds on test set:")
     print("-" * 80)
-    print(f"{'Threshold':<12} {'Dice':<8} {'F1':<8} {'Precision':<12} {'Recall':<12} {'Specificity':<12}")
+    print(f"{'Threshold':<12} {'Dice':<8} {'IoU':<8} {'F1':<8} {'Precision':<12} {'Recall':<12} {'Specificity':<12}")
     print("-" * 80)
     
     y_pred_prob = model.predict(X_test, verbose=0)
@@ -225,7 +234,7 @@ def compare_thresholds(model, X_test, y_test, thresholds=[0.3, 0.4, 0.5, 0.6, 0.
     for thresh in thresholds:
         metrics = compute_metrics_at_threshold(y_test, y_pred_prob, thresh)
         
-        print(f"{thresh:<12.2f} {metrics['dice']:<8.4f} {metrics['f1']:<8.4f} "
+        print(f"{thresh:<12.2f} {metrics['dice']:<8.4f} {metrics['iou']:<8.4f} {metrics['f1']:<8.4f} "
               f"{metrics['precision']:<12.4f} {metrics['recall']:<12.4f} {metrics['specificity']:<12.4f}")
     
     print("-" * 80)
@@ -266,27 +275,4 @@ def find_per_sample_optimal_threshold(y_true, y_pred_prob, metric='f1'):
 
 # Example usage
 if __name__ == "__main__":
-    import tensorflow as tf
-    
-    # Load your trained model
-    model = tf.keras.models.load_model('best_resupnet.keras')
-    
-    # Load validation data
-    X_val = np.load('processed_splits/X_val.npy')
-    y_val = np.load('processed_splits/y_val.npy')
-    
-    # Find optimal threshold
-    optimal_threshold, results = find_optimal_threshold(
-        model, X_val, y_val,
-        optimize_for='f1',  # or 'dice', 'balanced', 'youden'
-        verbose=True
-    )
-    
-    # Plot analysis
-    plot_threshold_analysis(results, optimal_threshold)
-    
-    # Compare multiple thresholds
-    X_test = np.load('processed_splits/X_test.npy')
-    y_test = np.load('processed_splits/y_test.npy')
-    
-    compare_thresholds(model, X_test, y_test)
+    print("Threshold optimizer ready for validation probability masks.")

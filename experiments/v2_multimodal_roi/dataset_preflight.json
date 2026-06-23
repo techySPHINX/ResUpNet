@@ -1,0 +1,20 @@
+{
+  "dataset_root": "data\\kaggle_brats2021_task1\\extracted",
+  "dataset_expected": "BraTS-style raw patient folders, e.g. BraTS2021_00000",
+  "modalities_required": [
+    "t1",
+    "t1ce",
+    "t2",
+    "flair"
+  ],
+  "segmentation_required": "seg",
+  "valid_patient_count": 1251,
+  "sample_patients": [
+    "BraTS2021_00000",
+    "BraTS2021_00002",
+    "BraTS2021_00003",
+    "BraTS2021_00005",
+    "BraTS2021_00006"
+  ],
+  "deep_check": null
+}

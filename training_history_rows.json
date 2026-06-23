@@ -1,0 +1,179 @@
+{
+  "trained_info": {
+    "experiment_name": "ResUpNet_BraTS2021_Multimodal_ROI",
+    "task": "brain_tumor_segmentation",
+    "model": "ResUpNet",
+    "dataset": "BraTS 2021",
+    "input_type": "multimodal_mri",
+    "image_size": "160x160",
+    "total_epochs": 50,
+    "created_at": "2026-06-17",
+    "metric_goal": {
+      "dice": "maximize",
+      "iou": "maximize",
+      "precision": "maximize",
+      "recall": "maximize",
+      "f1": "maximize",
+      "specificity": "maximize",
+      "accuracy": "maximize",
+      "hd95": "minimize",
+      "asd": "minimize",
+      "loss": "minimize"
+    }
+  },
+
+  "summary": {
+    "initial_epoch": {
+      "epoch": 1,
+      "train_dice": 0.147031,
+      "val_dice": 0.120967,
+      "val_iou": 0.064377,
+      "val_loss": 0.937407
+    },
+    "final_epoch": {
+      "epoch": 50,
+      "train_dice": 0.922947,
+      "val_dice": 0.890146,
+      "val_iou": 0.802039,
+      "val_loss": 0.262043,
+      "val_hd95": 4.8877,
+      "val_asd": 1.5056
+    },
+    "overall_progress": {
+      "val_dice_improvement": 0.769179,
+      "val_iou_improvement": 0.737662,
+      "val_loss_reduction": 0.675364,
+      "val_hd95_reduction": 11.866,
+      "val_asd_reduction": 4.4094
+    }
+  },
+
+  "best_checkpoints": {
+    "best_by_validation_dice": {
+      "epoch": 50,
+      "val_dice": 0.890146,
+      "val_iou": 0.802039,
+      "val_precision": 0.901572,
+      "val_recall": 0.882543,
+      "val_f1": 0.891956,
+      "val_accuracy": 0.990363,
+      "val_hd95": 4.8877,
+      "val_asd": 1.5056
+    },
+    "best_by_validation_iou": {
+      "epoch": 50,
+      "val_iou": 0.802039,
+      "val_dice": 0.890146
+    },
+    "best_by_validation_loss": {
+      "epochs": [41, 42, 43, 44, 45, 46],
+      "val_loss": 0.165
+    },
+    "best_by_hd95": {
+      "epoch": 50,
+      "val_hd95": 4.8877
+    },
+    "best_by_asd": {
+      "epoch": 45,
+      "val_asd": 1.4439
+    }
+  },
+
+  "epochs": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.892251,
+        "dice": 0.147031,
+        "iou": 0.079349,
+        "precision": 0.186233,
+        "recall": 0.242214,
+        "f1": 0.210567,
+        "specificity": 0.914762,
+        "accuracy": 0.901241
+      },
+      "validation": {
+        "loss": 0.937407,
+        "dice": 0.120967,
+        "iou": 0.064377,
+        "precision": 0.160742,
+        "recall": 0.218875,
+        "f1": 0.185358,
+        "specificity": 0.909542,
+        "accuracy": 0.895837,
+        "hd95": 16.7537,
+        "asd": 5.915
+      },
+      "optimizer": {
+        "learning_rate": 0.0001
+      }
+    },
+
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.864002,
+        "dice": 0.208274,
+        "iou": 0.116242,
+        "precision": 0.242362,
+        "recall": 0.294465,
+        "f1": 0.265885,
+        "specificity": 0.918746,
+        "accuracy": 0.906568
+      },
+      "validation": {
+        "loss": 0.913528,
+        "dice": 0.17702,
+        "iou": 0.097105,
+        "precision": 0.212158,
+        "recall": 0.268248,
+        "f1": 0.236929,
+        "specificity": 0.913343,
+        "accuracy": 0.900822,
+        "hd95": 16.0478,
+        "asd": 5.6453
+      },
+      "optimizer": {
+        "learning_rate": 0.0001
+      }
+    },
+
+    {
+      "epoch": 50,
+      "train": {
+        "loss": 0.223926,
+        "dice": 0.922947,
+        "iou": 0.85692,
+        "precision": 0.930504,
+        "recall": 0.913239,
+        "f1": 0.92179,
+        "specificity": 0.995603,
+        "accuracy": 0.993713
+      },
+      "validation": {
+        "loss": 0.262043,
+        "dice": 0.890146,
+        "iou": 0.802039,
+        "precision": 0.901572,
+        "recall": 0.882543,
+        "f1": 0.891956,
+        "specificity": 0.993046,
+        "accuracy": 0.990363,
+        "hd95": 4.8877,
+        "asd": 1.5056
+      },
+      "optimizer": {
+        "learning_rate": 0.00005
+      }
+    }
+  ],
+
+  "notes": [
+    "Validation Dice improved from 0.120967 to 0.890146.",
+    "Validation IoU improved from 0.064377 to 0.802039.",
+    "Best validation Dice was achieved at epoch 50.",
+    "Best validation loss stayed at 0.165 from epoch 41 to epoch 46.",
+    "Best ASD was achieved at epoch 45, but best Dice and HD95 were achieved at epoch 50.",
+    "Epoch 50 is the strongest checkpoint if the main selection metric is validation Dice."
+  ]
+}

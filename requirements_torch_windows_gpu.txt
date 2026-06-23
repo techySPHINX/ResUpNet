@@ -1,0 +1,8 @@
+# Install with:
+# python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+#
+# This file documents the active native Windows GPU backend. PyTorch is installed
+# separately because it uses the PyTorch CUDA wheel index, while the rest of the
+# project runtime packages are installed from PyPI.
+
+torch

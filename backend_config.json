@@ -1,0 +1,11 @@
+{
+  "active_backend": "native_windows_torch_cuda",
+  "available_backends": {
+    "native_windows_torch_cuda": {
+      "description": "Use RTX 5050 directly on Windows through PyTorch CUDA.",
+      "train_command": "python -B train_phase2_resupnet_torch.py --data-dir experiments\\v2_multimodal_roi\\processed_splits --epochs 150 --batch-size 8 --base-filters 32 --mixed-precision --augmentation-policy conservative --grad-clip-norm 1.0 --ema-decay 0.999 --early-stopping-patience 35 --output-dir E:\\ResUpNet\\runs\\resupnet_torch_cuda_8gb",
+      "safe_train_command": "python -B train_phase2_resupnet_torch.py --data-dir experiments\\v2_multimodal_roi\\processed_splits --epochs 150 --batch-size 4 --base-filters 24 --mixed-precision --augmentation-policy conservative --grad-clip-norm 1.0 --ema-decay 0.999 --early-stopping-patience 35 --output-dir E:\\ResUpNet\\runs\\resupnet_torch_cuda_safe",
+      "eval_command": "python -B evaluate_phase2_model_torch.py --data-dir experiments\\v2_multimodal_roi\\processed_splits --model-path E:\\ResUpNet\\runs\\resupnet_torch_cuda_8gb\\checkpoints\\best_model.pt --output-dir E:\\ResUpNet\\runs\\resupnet_torch_cuda_8gb\\evaluation_tta_post --tta --postprocess"
+    }
+  }
+}

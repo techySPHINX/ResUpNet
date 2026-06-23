@@ -1,0 +1,152 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "full curve JSON parsed",
+      "passed": true,
+      "detail": "Loaded resupnet_training_curve.json."
+    },
+    {
+      "name": "compact history JSON parsed",
+      "passed": true,
+      "detail": "Loaded training_history_rows.json."
+    },
+    {
+      "name": "full curve has 50 epochs",
+      "passed": true,
+      "detail": "Found 50 full-curve epochs."
+    },
+    {
+      "name": "epoch sequence is continuous",
+      "passed": true,
+      "detail": "Epoch sequence is [1, 2, 3]...[48, 49, 50]."
+    },
+    {
+      "name": "metric ranges are valid",
+      "passed": true,
+      "detail": "All score metrics are in [0, 1], loss/distances are non-negative, and LR is positive."
+    },
+    {
+      "name": "F1 and Dice/IoU identities hold",
+      "passed": true,
+      "detail": "F1 equals 2PR/(P+R), and Dice equals 2IoU/(1+IoU), within rounding tolerance."
+    },
+    {
+      "name": "summary.initial_epoch matches curve",
+      "passed": true,
+      "detail": "All nested values match the corresponding epoch row."
+    },
+    {
+      "name": "summary.final_epoch matches curve",
+      "passed": true,
+      "detail": "All nested values match the corresponding epoch row."
+    },
+    {
+      "name": "overall progress recomputes",
+      "passed": true,
+      "detail": "All improvement/reduction values recompute from epoch 1 and epoch 50."
+    },
+    {
+      "name": "final generalization gap recomputes",
+      "passed": true,
+      "detail": "Final train-minus-validation gaps match the full curve."
+    },
+    {
+      "name": "best checkpoint claims recompute",
+      "passed": true,
+      "detail": "Best Dice/IoU/HD95 at epoch 50; best loss at epochs [41, 42, 43, 44, 45, 46]; best ASD at epoch 45."
+    },
+    {
+      "name": "compact rows match full curve for shared epochs",
+      "passed": true,
+      "detail": "Epochs present in both artifacts have matching metric values."
+    },
+    {
+      "name": "experiment metadata matches across artifacts",
+      "passed": true,
+      "detail": "Shared experiment metadata fields are consistent."
+    }
+  ],
+  "warnings": [
+    "training_history_rows.json contains 3 selected epoch rows, not the full 50-epoch curve. Use resupnet_training_curve.json for plots and trend analysis."
+  ],
+  "computed": {
+    "final_epoch": 50,
+    "initial_val_dice": 0.120967,
+    "final_val_dice": 0.890146,
+    "final_train_dice": 0.922947,
+    "final_val_iou": 0.802039,
+    "final_val_loss": 0.262043,
+    "final_val_precision": 0.901572,
+    "final_val_recall": 0.882543,
+    "final_val_f1": 0.891956,
+    "final_val_hd95": 4.8877,
+    "final_val_asd": 1.5056,
+    "final_train_minus_val_dice": 0.03280099999999997,
+    "val_dice_absolute_gain": 0.769179,
+    "val_dice_relative_gain_pct": 635.8585399323782,
+    "val_loss_reduction_pct": 72.04597362725048,
+    "val_hd95_reduction_pct": 70.82614586628625,
+    "val_asd_reduction_pct": 74.54606931530007,
+    "last10_val_dice_mean": 0.878591,
+    "last10_val_dice_population_std": 0.006156022936929332,
+    "last10_val_dice_delta": 0.017401,
+    "epoch41_to_50_val_dice_gain": 0.017401
+  },
+  "paper_context": [
+    {
+      "name": "ResUpNet current artifact",
+      "metric": "Val WT Dice, selected 2D slices",
+      "dice": 0.890146,
+      "hd95": 4.8877,
+      "protocol": "BraTS 2021 selected-slice validation, binary WT",
+      "source": "resupnet_training_curve.json",
+      "claim": "Primary local artifact result. Strong selected-slice evidence, not official full-volume benchmark evidence."
+    },
+    {
+      "name": "nnU-Net BraTS 2020",
+      "metric": "WT Dice",
+      "dice": 0.8895,
+      "hd95": 8.498,
+      "protocol": "BraTS 2020 competition, full-volume 3D ensemble",
+      "source": "https://arxiv.org/abs/2011.00848",
+      "claim": "Numerically similar WT Dice and lower HD95 in our artifact, but protocols differ."
+    },
+    {
+      "name": "Triplanar U-Net ensemble",
+      "metric": "WT Dice",
+      "dice": 0.89,
+      "hd95": null,
+      "protocol": "BraTS 2020 unseen test, triplanar ensemble",
+      "source": "https://arxiv.org/abs/2105.11356",
+      "claim": "Numerically comparable WT Dice, protocol differs."
+    },
+    {
+      "name": "Self-ensembled 3D U-Net",
+      "metric": "WT Dice",
+      "dice": 0.89,
+      "hd95": 6.7,
+      "protocol": "BraTS 2020 final test, 3D ensemble",
+      "source": "https://arxiv.org/abs/2011.01045",
+      "claim": "Numerically comparable WT Dice and lower HD95 in our artifact, protocol differs."
+    },
+    {
+      "name": "Residual Transformer ensemble",
+      "metric": "Mean Dice",
+      "dice": 0.876,
+      "hd95": null,
+      "protocol": "BraTS 2021 3D mean Dice across regions",
+      "source": "https://arxiv.org/abs/2308.00128",
+      "claim": "Our selected-slice Dice is numerically higher than this mean Dice, but mean-region and WT Dice are not interchangeable."
+    },
+    {
+      "name": "BiTr-Unet",
+      "metric": "WT Dice",
+      "dice": 0.9257,
+      "hd95": 3.0,
+      "protocol": "BraTS 2021 testing, CNN-transformer 3D method",
+      "source": "https://arxiv.org/abs/2109.12271",
+      "claim": "Published full-volume result is stronger; use as upper context, not as a paper we beat."
+    }
+  ]
+}
