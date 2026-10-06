@@ -155,6 +155,12 @@ After training, evaluate the best checkpoint:
 python -B evaluate_phase2_model_torch.py --data-dir experiments\v2_multimodal_roi\processed_splits --model-path E:\ResUpNet\runs\resupnet_torch_cuda_8gb\checkpoints\best_model.pt --output-dir E:\ResUpNet\runs\resupnet_torch_cuda_8gb\evaluation_tta_post --tta --postprocess
 ```
 
+The canonical test result is `primary_test_metrics` in
+`evaluation_summary.json`. Dice, IoU, precision, recall, F1, specificity, and
+accuracy are micro-averaged by pooling TP/FP/FN/TN across every pixel in all
+selected test slices. Per-slice summaries remain available for diagnostics;
+metrics are not averaged per patient.
+
 Generate plots:
 
 ```powershell

@@ -356,12 +356,16 @@ def main():
 
     tumor_rows = [row for row in rows if not row["empty_true"]]
     empty_rows = [row for row in rows if row["empty_true"]]
+    global_test_metrics = aggregate_confusion(rows)
+    global_tumor_test_metrics = aggregate_confusion(tumor_rows)
     summary = {
         "backend": "native_windows_torch_cuda" if device.type == "cuda" else "native_windows_torch_cpu",
         "model_path": str(model_path),
         "data_dir": str(data_dir),
         "evaluation_protocol": "selected_slice_2d",
         "protocol_note": "Current arrays are selected/capped 2D slices, not full-volume official BraTS evaluation.",
+        "primary_metric_aggregation": "micro_over_all_test_pixels",
+        "primary_metric_population": "all pixels in all selected/capped 2D test slices",
         "threshold_source": "validation",
         "threshold_metric": args.threshold_metric,
         "selected_threshold": best_threshold,
@@ -372,8 +376,9 @@ def main():
         "all_test_rows": summarize(rows),
         "tumor_test_rows": summarize(tumor_rows),
         "empty_true_test_rows": summarize(empty_rows),
-        "global_test_metrics": aggregate_confusion(rows),
-        "global_tumor_test_metrics": aggregate_confusion(tumor_rows),
+        "primary_test_metrics": global_test_metrics,
+        "global_test_metrics": global_test_metrics,
+        "global_tumor_test_metrics": global_tumor_test_metrics,
         "empty_true_false_positive_rows": int(sum(row["empty_true"] and row["pred_pixels"] > 0 for row in rows)),
         "counts": {
             "test_rows": len(rows),
@@ -386,6 +391,10 @@ def main():
         json.dump(summary, f, indent=2)
     print(json.dumps(summary["counts"], indent=2))
     print(f"Selected threshold: {threshold}")
+    print(json.dumps({
+        "primary_metric_aggregation": summary["primary_metric_aggregation"],
+        "primary_test_metrics": summary["primary_test_metrics"],
+    }, indent=2))
     print(f"Summary: {output_dir / 'evaluation_summary.json'}")
 
 

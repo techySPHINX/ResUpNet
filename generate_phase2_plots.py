@@ -206,9 +206,9 @@ def plot_summary_bars(summary_path: Path, output_dir: Path, title: str):
     if not summary:
         return []
     plt, _ = _setup_matplotlib()
-    tumor = summary.get("tumor_test_rows", {})
+    primary = summary.get("primary_test_metrics") or summary.get("global_test_metrics", {})
     metrics = ["dice", "iou", "precision", "recall", "f1", "specificity"]
-    values = [tumor.get(m, {}).get("mean", math.nan) for m in metrics]
+    values = [primary.get(m, math.nan) for m in metrics]
     if all(math.isnan(v) for v in values):
         return []
     paths = []
@@ -216,7 +216,7 @@ def plot_summary_bars(summary_path: Path, output_dir: Path, title: str):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.bar([m.upper() for m in metrics], values)
     ax.set_ylim(0, 1)
-    ax.set_title(f"{title}: Tumor-Row Mean Metrics")
+    ax.set_title(f"{title}: Micro-Averaged Test Metrics (All Pixels)")
     out = output_dir / "model_comparison_bar_chart.png"
     _save(fig, out)
     plt.close(fig)
@@ -232,7 +232,7 @@ def plot_summary_bars(summary_path: Path, output_dir: Path, title: str):
     ax.set_xticks(angles)
     ax.set_xticklabels([m.upper() for m in metrics])
     ax.set_ylim(0, 1)
-    ax.set_title("Metric Radar")
+    ax.set_title("Micro-Averaged Test Metrics (All Pixels)")
     out = output_dir / "model_comparison_radar_chart.png"
     _save(fig, out)
     plt.close(fig)

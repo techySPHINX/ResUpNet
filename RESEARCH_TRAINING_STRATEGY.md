@@ -76,8 +76,10 @@ reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 
    Evaluation output now includes patient ID, slice index, slice class, and
    original tumor pixels for each test row when `slice_metadata.json` is
-   present. The summary also includes global confusion-derived metrics in
-   addition to per-row summaries.
+   present. `primary_test_metrics` is the canonical result and is micro-averaged
+   from pooled confusion counts across all selected test-slice pixels. Per-row
+   summaries are retained only as diagnostics; no patient-level averaging is
+   performed.
 
 ## Recommended Main Run
 
