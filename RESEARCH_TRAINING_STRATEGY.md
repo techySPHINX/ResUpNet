@@ -1,6 +1,6 @@
 # Research Strategy
 
-Date: 2026-06-19
+Date: 2026-10-07
 
 ## Positioning
 
@@ -13,18 +13,19 @@ Use the claim language carefully:
 
 - Safe before training: "The pipeline is designed to improve robustness and
   selected-slice segmentation performance through stronger training controls."
-- Safe for the current checked-in artifacts: "The validated artifact curve
-  reports 0.890146 Dice / 0.802039 IoU / 4.8877 HD95 under the selected-slice
-  validation protocol."
+- Safe for the current checked-in artifacts: "The internally consistent
+  artifact curve records 0.890146 Dice / 0.802039 IoU / 4.8877 HD95 under a
+  selected-slice validation setup; its aggregation cannot be reconstructed
+  from the artifact alone."
 - Not safe: "This is the official full-volume BraTS state of the art."
 
-## Current Validated Artifact Result
+## Historical Artifact Result
 
-`resupnet_training_curve.json` is the primary result source. The synchronized
+`resupnet_training_curve.json` is the primary historical curve source. The synchronized
 compact artifact, `training_history_rows.json`, matches the full curve for its
 shared rows but only contains epochs `1`, `2`, and `50`.
 
-Validated epoch-50 selected-slice validation metrics:
+Recorded epoch-50 selected-slice validation metrics:
 
 ```text
 Dice:        0.890146
@@ -44,6 +45,11 @@ Generated proof report:
 ```text
 reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 ```
+
+The active canonical computation is defined in
+[`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md). The historical JSON files do not
+contain predictions or confusion counts and therefore do not prove that these
+recorded values used protocol version `1.0`.
 
 ## Implemented Pre-Training
 
@@ -71,7 +77,7 @@ reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 
    `run_config.json` now records augmentation policy, EMA settings, gradient
    clipping, early stopping, dropout, weight decay, trainable parameter count,
-   and reproducibility mode.
+   reproducibility mode, and the hard-metric protocol metadata.
 6. Traceable evaluation
 
    Evaluation output now includes patient ID, slice index, slice class, and
@@ -112,12 +118,12 @@ test evaluation output, not by looking at test threshold maxima.
 
 ## Result Criteria
 
-Report these metrics together:
+Report these metrics in this order:
 
-- global test Dice, IoU, precision, recall, F1, specificity, accuracy
-- tumor-row mean Dice, IoU, precision, recall, F1
-- all-row mean Dice and IoU
-- HD95 and ASD distributions
+- primary pixel-micro test Dice, IoU, precision, recall, F1, specificity, accuracy
+- secondary tumor-slice pixel-micro metrics
+- diagnostic per-slice macro summaries
+- per-slice HD95 and ASD distributions and valid-slice counts
 - empty-true false positive rows
 - selected threshold and threshold metric
 - raw checkpoint versus EMA checkpoint

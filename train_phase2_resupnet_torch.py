@@ -15,6 +15,13 @@ import numpy as np
 
 from resupnet_runtime_paths import configure_runtime_paths, default_runs_root
 from resupnet_torch_model import ResUpNetTorch, combined_loss, dice_score_from_logits
+from segmentation_metrics import (
+    HARD_PREDICTION_RULE,
+    METRIC_PROTOCOL_VERSION,
+    TRAINING_METRIC_AGGREGATION,
+    TRAINING_METRIC_POPULATION,
+    metrics_from_confusion_counts,
+)
 
 RUNTIME_PATHS = configure_runtime_paths()
 
@@ -281,79 +288,19 @@ def batch_confusion_metrics(logits, targets, threshold=0.5, smooth=1e-6):
     fp = torch.logical_and(preds, ~truth).sum().item()
     fn = torch.logical_and(~preds, truth).sum().item()
     tn = torch.logical_and(~preds, ~truth).sum().item()
-    dice = (2.0 * tp + smooth) / (2.0 * tp + fp + fn + smooth)
-    iou = (tp + smooth) / (tp + fp + fn + smooth)
-    precision = (tp + smooth) / (tp + fp + smooth)
-    recall = (tp + smooth) / (tp + fn + smooth)
-    f1 = (2.0 * precision * recall + smooth) / (precision + recall + smooth)
-    specificity = (tn + smooth) / (tn + fp + smooth)
-    accuracy = (tp + tn + smooth) / (tp + tn + fp + fn + smooth)
     return {
         "tp": int(tp),
         "fp": int(fp),
         "fn": int(fn),
         "tn": int(tn),
-        "dice": float(dice),
-        "iou": float(iou),
-        "precision": float(precision),
-        "recall": float(recall),
-        "f1": float(f1),
-        "specificity": float(specificity),
-        "accuracy": float(accuracy),
+        **metrics_from_confusion_counts(tp, fp, fn, tn),
     }
 
 
-def metrics_from_counts(tp, fp, fn, tn, smooth=1e-6):
-    if tp + fp + fn == 0:
-        foreground_metrics = {
-            "dice": 1.0,
-            "iou": 1.0,
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-        }
-    elif tp + fn == 0:
-        foreground_metrics = {
-            "dice": 0.0,
-            "iou": 0.0,
-            "precision": 0.0 if fp > 0 else 1.0,
-            "recall": 1.0,
-            "f1": 0.0,
-        }
-    elif tp + fp == 0:
-        foreground_metrics = {
-            "dice": 0.0,
-            "iou": 0.0,
-            "precision": 1.0,
-            "recall": 0.0,
-            "f1": 0.0,
-        }
-    else:
-        precision = (tp + smooth) / (tp + fp + smooth)
-        recall = (tp + smooth) / (tp + fn + smooth)
-        foreground_metrics = {
-            "dice": (2.0 * tp + smooth) / (2.0 * tp + fp + fn + smooth),
-            "iou": (tp + smooth) / (tp + fp + fn + smooth),
-            "precision": precision,
-            "recall": recall,
-            "f1": (2.0 * precision * recall + smooth) / (precision + recall + smooth),
-        }
-    dice = (2.0 * tp + smooth) / (2.0 * tp + fp + fn + smooth)
-    iou = (tp + smooth) / (tp + fp + fn + smooth)
-    precision = (tp + smooth) / (tp + fp + smooth)
-    recall = (tp + smooth) / (tp + fn + smooth)
-    f1 = (2.0 * precision * recall + smooth) / (precision + recall + smooth)
-    specificity = (tn + smooth) / (tn + fp + smooth)
-    accuracy = (tp + tn + smooth) / (tp + tn + fp + fn + smooth)
-    return {
-        "dice": float(foreground_metrics["dice"]),
-        "iou": float(foreground_metrics["iou"]),
-        "precision": float(foreground_metrics["precision"]),
-        "recall": float(foreground_metrics["recall"]),
-        "f1": float(foreground_metrics["f1"]),
-        "specificity": float(specificity),
-        "accuracy": float(accuracy),
-    }
+def metrics_from_counts(tp, fp, fn, tn, smooth=None):
+    """Compatibility wrapper around the canonical pooled-count metrics."""
+
+    return metrics_from_confusion_counts(tp, fp, fn, tn)
 
 
 def format_progress_line(progress):
@@ -628,6 +575,11 @@ def main():
         "history_path": str(output_dir / "logs" / "history.json"),
         "progress_interval": args.progress_interval,
         "progress_format": args.progress_format,
+        "metric_protocol_version": METRIC_PROTOCOL_VERSION,
+        "hard_metric_aggregation": TRAINING_METRIC_AGGREGATION,
+        "hard_metric_population": TRAINING_METRIC_POPULATION,
+        "hard_prediction_rule": HARD_PREDICTION_RULE,
+        "hard_metric_threshold": 0.5,
         "resume_from": args.resume_from,
         "resume_epoch": resume_epoch,
         "runtime_paths": RUNTIME_PATHS,

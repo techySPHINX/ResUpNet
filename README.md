@@ -75,6 +75,7 @@ The active pipeline keeps the safest non-deviating improvements:
 - capped tumor, near-tumor, and hard-negative slice selection
 - patient-wise train/validation/test split
 - validation-only threshold selection during evaluation
+- pixel-micro hard metrics from pooled TP/FP/FN/TN counts
 
 Current validation and test arrays are patient-wise but still use the same
 selected-slice policy as training. They are suitable for internal selected-slice
@@ -82,7 +83,15 @@ experiments, but not for official full-volume BraTS reporting. For publication
 claims, evaluate on full patient volumes or clearly report the selected-slice
 protocol.
 
-## Current Result Validation
+## Metric Protocol
+
+[`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md) is the source of truth for metric
+computation. The primary result pools TP/FP/FN/TN over every pixel in all
+selected slices before calculating Dice, IoU, precision, recall, F1,
+specificity, and accuracy. Slice means are diagnostics, and patient-level
+averaging is not used.
+
+## Historical Result Artifact
 
 The checked-in result artifacts have a reproducible validation report:
 
@@ -90,11 +99,13 @@ The checked-in result artifacts have a reproducible validation report:
 reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 ```
 
-It validates `resupnet_training_curve.json` and `training_history_rows.json`,
-generates plots, and documents the exact claim boundary for the current
-selected-slice protocol.
+It checks the internal consistency of `resupnet_training_curve.json` and
+`training_history_rows.json`, generates plots, and documents their claim
+boundary. Those historical files do not contain predictions or confusion
+counts, so their aggregation cannot be independently reconstructed and their
+values must not be relabeled as verified protocol-1.0 micro metrics.
 
-Current validated epoch-50 selected-slice validation metrics:
+Recorded epoch-50 selected-slice validation metrics:
 
 ```text
 Dice: 0.890146
@@ -118,6 +129,8 @@ Regenerate the report and plots with:
 - `phase2_input_pipeline.py`: multimodal normalization, ROI crop, slice selection
 - `prepare_phase2_dataset.py`: patient-wise split generation
 - `resupnet_torch_model.py`: native PyTorch ResUpNet model
+- `segmentation_metrics.py`: canonical pooled-count metric implementation
+- `METRICS_PROTOCOL.md`: exact formulas, aggregation, edge cases, and output contract
 - `train_phase2_resupnet_torch.py`: native Windows CUDA training for RTX GPUs
 - `evaluate_phase2_model_torch.py`: native PyTorch evaluation
 - `generate_phase2_plots.py`: post-evaluation plots and metric visualizations
@@ -159,7 +172,9 @@ The canonical test result is `primary_test_metrics` in
 `evaluation_summary.json`. Dice, IoU, precision, recall, F1, specificity, and
 accuracy are micro-averaged by pooling TP/FP/FN/TN across every pixel in all
 selected test slices. Per-slice summaries remain available for diagnostics;
-metrics are not averaged per patient.
+metrics are not averaged per patient. HD95 and ASD are per-slice boundary
+metrics summarized over slices with defined distances. See
+[`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md) for the complete protocol.
 
 Generate plots:
 

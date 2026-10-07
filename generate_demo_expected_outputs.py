@@ -33,16 +33,17 @@ def decreasing_curve(epoch: int, start: float, end: float, k: float = 0.075) -> 
 
 
 def row(epoch: int) -> dict:
-    val_dice = smooth_curve(epoch, 0.055, 0.907, 0.075)
-    train_dice = smooth_curve(epoch, 0.075, 0.934, 0.082)
-    val_iou = val_dice / (2.0 - val_dice)
-    train_iou = train_dice / (2.0 - train_dice)
     val_precision = smooth_curve(epoch, 0.100, 0.922, 0.071)
     val_recall = smooth_curve(epoch, 0.160, 0.895, 0.077)
     train_precision = smooth_curve(epoch, 0.120, 0.944, 0.078)
     train_recall = smooth_curve(epoch, 0.180, 0.923, 0.081)
     val_f1 = (2 * val_precision * val_recall) / max(val_precision + val_recall, 1e-8)
     train_f1 = (2 * train_precision * train_recall) / max(train_precision + train_recall, 1e-8)
+    # Canonical binary pixel-micro F1 and Dice are mathematically identical.
+    val_dice = val_f1
+    train_dice = train_f1
+    val_iou = val_dice / (2.0 - val_dice)
+    train_iou = train_dice / (2.0 - train_dice)
     return {
         "epoch": epoch,
         "source": "simulated_demo_not_real_training_result",

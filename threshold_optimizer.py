@@ -6,52 +6,30 @@ Finds optimal threshold to maximize Dice, F1, or balance Precision/Recall
 
 import numpy as np
 
+from segmentation_metrics import micro_metrics_from_arrays
+
 try:
     from tqdm import tqdm
 except ImportError:  # pragma: no cover - optional progress display
     tqdm = None
 
 
-def dice_score(y_true, y_pred, smooth=1e-6):
-    """Calculate Dice coefficient"""
-    intersection = np.sum(y_true * y_pred)
-    return (2. * intersection + smooth) / (np.sum(y_true) + np.sum(y_pred) + smooth)
+def dice_score(y_true, y_pred, smooth=None):
+    """Calculate canonical pixel-micro Dice.
+
+    ``smooth`` is retained for compatibility with older callers.  The canonical
+    empty-mask policy is defined in :mod:`segmentation_metrics` and does not use
+    an epsilon-dependent score.
+    """
+
+    return micro_metrics_from_arrays(y_true, y_pred)["dice"]
 
 
 def compute_metrics_at_threshold(y_true_all, y_pred_prob_all, threshold):
-    """Compute all metrics at a specific threshold"""
+    """Compute canonical micro metrics at a specific threshold."""
+
     y_pred = (y_pred_prob_all > threshold).astype(np.float32)
-    
-    # Flatten for pixel-wise metrics
-    y_true_flat = y_true_all.flatten()
-    y_pred_flat = y_pred.flatten()
-    
-    # Calculate metrics
-    tp = np.sum(y_true_flat * y_pred_flat)
-    fp = np.sum((1 - y_true_flat) * y_pred_flat)
-    fn = np.sum(y_true_flat * (1 - y_pred_flat))
-    tn = np.sum((1 - y_true_flat) * (1 - y_pred_flat))
-    
-    precision = tp / (tp + fp + 1e-8)
-    recall = tp / (tp + fn + 1e-8)
-    f1 = 2 * precision * recall / (precision + recall + 1e-8)
-    specificity = tn / (tn + fp + 1e-8)
-    iou = tp / (tp + fp + fn + 1e-8)
-    
-    dice = dice_score(y_true_flat, y_pred_flat)
-    
-    return {
-        'dice': dice,
-        'iou': iou,
-        'precision': precision,
-        'recall': recall,
-        'f1': f1,
-        'specificity': specificity,
-        'tp': tp,
-        'fp': fp,
-        'fn': fn,
-        'tn': tn
-    }
+    return micro_metrics_from_arrays(y_true_all, y_pred)
 
 
 def find_optimal_threshold(
@@ -251,20 +229,9 @@ def find_per_sample_optimal_threshold(y_true, y_pred_prob, metric='f1'):
     
     for thresh in np.linspace(0.1, 0.9, 41):
         y_pred = (y_pred_prob > thresh).astype(np.float32)
-        
-        if metric == 'f1':
-            y_true_flat = y_true.flatten()
-            y_pred_flat = y_pred.flatten()
-            tp = np.sum(y_true_flat * y_pred_flat)
-            fp = np.sum((1 - y_true_flat) * y_pred_flat)
-            fn = np.sum(y_true_flat * (1 - y_pred_flat))
-            precision = tp / (tp + fp + 1e-8)
-            recall = tp / (tp + fn + 1e-8)
-            score = 2 * precision * recall / (precision + recall + 1e-8)
-        elif metric == 'dice':
-            score = dice_score(y_true, y_pred)
-        else:
+        if metric not in {'f1', 'dice'}:
             raise ValueError(f"Unknown metric: {metric}")
+        score = micro_metrics_from_arrays(y_true, y_pred)[metric]
         
         if score > best_score:
             best_score = score

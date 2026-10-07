@@ -26,7 +26,7 @@ SCORE_METRICS = ("dice", "iou", "precision", "recall", "f1", "specificity", "acc
 LOWER_IS_BETTER = ("loss", "hd95", "asd")
 CONTEXT_PAPER_ROWS = [
     {
-        "name": "ResUpNet current artifact",
+        "name": "ResUpNet historical artifact",
         "metric": "Val WT Dice, selected 2D slices",
         "dice": 0.890146,
         "hd95": 4.8877,
@@ -306,6 +306,13 @@ def validate_artifacts(curve: dict[str, Any], compact: dict[str, Any]) -> dict[s
     info_failures = [key for key in common_keys if info_full.get(key) != info_compact.get(key)]
     add_check(checks, "experiment metadata matches across artifacts", not info_failures, "Shared experiment metadata fields are consistent." if not info_failures else f"Mismatched fields: {', '.join(info_failures)}")
 
+    aggregation_provenance = info_full.get("primary_metric_aggregation")
+    if aggregation_provenance is None:
+        warnings.append(
+            "The historical artifacts do not record metric aggregation or pooled confusion counts. "
+            "Their values cannot be independently classified as protocol-1.0 pixel-micro metrics."
+        )
+
     final = epochs[-1]["validation"] if epochs else {}
     train_final = epochs[-1]["train"] if epochs else {}
     first = epochs[0]["validation"] if epochs else {}
@@ -327,6 +334,8 @@ def validate_artifacts(curve: dict[str, Any], compact: dict[str, Any]) -> dict[s
         "val_loss_reduction_pct": ((first.get("loss") - final.get("loss")) / first.get("loss") * 100.0) if final and first and first.get("loss") else None,
         "val_hd95_reduction_pct": ((first.get("hd95") - final.get("hd95")) / first.get("hd95") * 100.0) if final and first and first.get("hd95") else None,
         "val_asd_reduction_pct": ((first.get("asd") - final.get("asd")) / first.get("asd") * 100.0) if final and first and first.get("asd") else None,
+        "metric_aggregation_provenance": aggregation_provenance or "not_recorded_in_historical_artifact",
+        "canonical_metric_protocol": "METRICS_PROTOCOL.md version 1.0",
     }
 
     if epochs:
@@ -508,9 +517,9 @@ def build_report(curve: dict[str, Any], compact: dict[str, Any], validation: dic
     lines.append("")
     lines.append("## Executive Verdict")
     lines.append("")
-    lines.append(f"The two result artifacts are **{status}** under artifact-level checks. The full 50-epoch curve supports a final validation Dice of **{fmt(computed['final_val_dice'], 6)}**, IoU of **{fmt(computed['final_val_iou'], 6)}**, F1 of **{fmt(computed['final_val_f1'], 6)}**, HD95 of **{fmt(computed['final_val_hd95'], 4)}**, and ASD of **{fmt(computed['final_val_asd'], 4)}** at epoch **{computed['final_epoch']}**.")
+    lines.append(f"The two result artifacts are **{status}** under artifact-level consistency checks. The full 50-epoch curve records a final validation Dice of **{fmt(computed['final_val_dice'], 6)}**, IoU of **{fmt(computed['final_val_iou'], 6)}**, F1 of **{fmt(computed['final_val_f1'], 6)}**, HD95 of **{fmt(computed['final_val_hd95'], 4)}**, and ASD of **{fmt(computed['final_val_asd'], 4)}** at epoch **{computed['final_epoch']}**.")
     lines.append("")
-    lines.append("This is strong internal selected-slice evidence. It is not, by itself, proof of official BraTS full-volume superiority because the current protocol uses 2D selected slices at 160x160 and binary whole-tumor masks.")
+    lines.append("This is historical selected-slice training evidence. The artifacts do not contain predictions or confusion counts, so their aggregation cannot be independently reconstructed or relabeled as verified protocol-1.0 pixel-micro metrics. It is also not proof of official BraTS full-volume superiority.")
     lines.append("")
     lines.append("## Inputs")
     lines.append("")
@@ -525,6 +534,12 @@ def build_report(curve: dict[str, Any], compact: dict[str, Any], validation: dic
     lines.append("| --- | --- |")
     for key in ("experiment_name", "task", "model", "dataset", "input_type", "image_size", "total_epochs", "created_at"):
         lines.append(f"| {key} | {info.get(key, 'n/a')} |")
+    lines.append("")
+    lines.append("## Metric Protocol")
+    lines.append("")
+    lines.append("The active pipeline is governed by [`METRICS_PROTOCOL.md`](../../METRICS_PROTOCOL.md): hard metrics are computed from TP/FP/FN/TN pooled over all pixels in all selected slices. Per-slice means are diagnostic only, and patient-level averaging is not used.")
+    lines.append("")
+    lines.append(f"Historical artifact aggregation provenance: `{computed['metric_aggregation_provenance']}`.")
     lines.append("")
     lines.append("## Validation Checks")
     lines.append("")
@@ -601,7 +616,7 @@ def build_report(curve: dict[str, Any], compact: dict[str, Any], validation: dic
             lines.append("")
     lines.append("## Why The Present Structure Can Produce Better Results")
     lines.append("")
-    lines.append("The current result is plausible because the current native PyTorch structure is materially stronger than the earlier project baseline and many simple 2D U-Net style setups:")
+    lines.append("The recorded curve is plausible because the native PyTorch structure is materially stronger than the earlier project baseline and many simple 2D U-Net style setups:")
     lines.append("")
     lines.append("- Four MRI modalities are used together: T1, T1ce, T2, and FLAIR. This gives the model complementary contrast information instead of forcing it to infer tumor extent from a single channel.")
     lines.append("- The split is patient-wise with no overlap, which removes a common leakage failure mode in slice-based medical imaging experiments.")
@@ -618,23 +633,24 @@ def build_report(curve: dict[str, Any], compact: dict[str, Any], validation: dic
     for row in CONTEXT_PAPER_ROWS[1:]:
         lines.append(f"| [{row['name']}]({row['source']}) | {row['metric']} | {fmt(row['dice'], 4)} | {fmt(CONTEXT_PAPER_ROWS[0]['dice'], 4)} | {row['claim']} |")
     lines.append("")
-    lines.append("The strongest defensible statement is: **under the current selected-slice validation protocol, ResUpNet reaches a Dice value that is numerically competitive with several published whole-tumor Dice results and stronger than the project's earlier internal baselines, while using a native PyTorch pipeline tuned for the available system.**")
+    lines.append("The strongest defensible statement is: **the historical artifact records selected-slice validation values that are numerically competitive with several published whole-tumor Dice results, but its aggregation is not reconstructable and the protocols differ.**")
     lines.append("")
     lines.append("The strongest statement that is **not** yet defensible is: **this is better than all BraTS papers or official full-volume BraTS state of the art.** BiTr-Unet, for example, reports stronger BraTS 2021 full-volume WT Dice and HD95 than this artifact.")
     lines.append("")
     lines.append("## Native-System Limitations")
     lines.append("")
-    lines.append("- The current artifacts validate a 2D selected-slice protocol, not full 3D patient-volume inference.")
+    lines.append("- The historical artifacts record a 2D selected-slice setup, not full 3D patient-volume inference.")
     lines.append("- Input size is 160x160 because of local storage and VRAM constraints; this may lose fine boundary detail compared with 192, 224, or 256 crops.")
     lines.append("- The task is binary whole-tumor segmentation, not full BraTS subregion segmentation for ET, TC, and WT.")
     lines.append("- The artifact-level proof does not include the matching checkpoint, run directory, evaluator output, or test-set summary. Those are required for publication-grade reproducibility.")
+    lines.append("- The artifact does not contain pooled confusion counts or per-slice predictions, so its aggregation cannot be verified against `METRICS_PROTOCOL.md`.")
     lines.append("- The validation loss minimum occurs before the final Dice maximum, so final checkpoint selection should explicitly prioritize Dice/IoU if overlap quality is the main objective.")
     lines.append("")
     lines.append("## Claim Boundary")
     lines.append("")
     lines.append("Safe claim:")
     lines.append("")
-    lines.append("> The checked-in Phase 2 result artifacts are internally consistent and show validation Dice improving from 0.120967 to 0.890146 over 50 epochs under the project's BraTS 2021 selected-slice binary whole-tumor protocol.")
+    lines.append("> The checked-in Phase 2 result artifacts are internally consistent and record validation Dice improving from 0.120967 to 0.890146 over 50 epochs under a selected-slice binary whole-tumor setup; the aggregation is not recoverable from the artifacts alone.")
     lines.append("")
     lines.append("Safe competitive-positioning claim:")
     lines.append("")

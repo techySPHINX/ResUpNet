@@ -33,7 +33,15 @@ Patients: train=875, val=188, test=188
 Patient overlap: none
 ```
 
-## Current Validated Artifact Result
+## Canonical Metric Protocol
+
+The active implementation follows [`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md).
+Hard training, validation, threshold-search, and primary test metrics are
+computed after pooling TP/FP/FN/TN over every pixel in the relevant selected
+slices. Per-slice means are diagnostic only; patient-level averaging is not
+used.
+
+## Historical Artifact Result
 
 The current trained-result artifact is `resupnet_training_curve.json`. It is
 validated by:
@@ -42,7 +50,7 @@ validated by:
 reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 ```
 
-Epoch-50 selected-slice validation metrics:
+Recorded epoch-50 selected-slice validation metrics:
 
 ```text
 Dice: 0.890146
@@ -55,6 +63,10 @@ Loss: 0.262043
 
 `training_history_rows.json` is a compact synchronized cross-check for epochs
 `1`, `2`, and `50`; it is not the full curve.
+
+The historical files do not include predictions or pooled confusion counts, so
+their aggregation is not independently reconstructable. New runs identify
+protocol version `1.0` in their run and evaluation metadata.
 
 ## Why This Setup Is Safe
 
@@ -87,7 +99,8 @@ Future detail ablations:
 3. Select the threshold from validation predictions only.
 4. Evaluate the locked test set once.
 5. Generate plots from the saved evaluation files.
-6. Report all-row, tumor-row, and empty-true-row metrics together.
+6. Report `primary_test_metrics` first, followed by clearly labeled tumor-slice,
+   per-slice, boundary-distance, and empty-true diagnostics.
 
 Training:
 

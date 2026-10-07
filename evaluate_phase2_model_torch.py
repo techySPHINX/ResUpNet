@@ -13,6 +13,16 @@ from scipy.ndimage import binary_erosion, binary_fill_holes, distance_transform_
 
 from resupnet_runtime_paths import configure_runtime_paths, default_runs_root
 from resupnet_torch_model import ResUpNetTorch
+from segmentation_metrics import (
+    HARD_PREDICTION_RULE,
+    METRIC_PROTOCOL_VERSION,
+    PRIMARY_METRIC_AGGREGATION,
+    PRIMARY_METRIC_POPULATION,
+    aggregate_confusion_rows,
+    confusion_counts_numpy,
+    metrics_from_confusion_counts,
+    micro_metrics_from_arrays,
+)
 from threshold_optimizer import compute_metrics_at_threshold
 
 RUNTIME_PATHS = configure_runtime_paths()
@@ -22,38 +32,22 @@ def _mask_array(mask) -> np.ndarray:
     return np.squeeze(np.asarray(mask) > 0.5)
 
 
-def dice_np(y_true, y_pred, smooth=1e-6):
-    yt = _mask_array(y_true)
-    yp = _mask_array(y_pred)
-    intersection = np.logical_and(yt, yp).sum()
-    return (2.0 * intersection + smooth) / (yt.sum() + yp.sum() + smooth)
+def dice_np(y_true, y_pred, smooth=None):
+    return micro_metrics_from_arrays(y_true, y_pred)["dice"]
 
 
-def iou_np(y_true, y_pred, smooth=1e-6):
-    yt = _mask_array(y_true)
-    yp = _mask_array(y_pred)
-    intersection = np.logical_and(yt, yp).sum()
-    union = np.logical_or(yt, yp).sum()
-    return (intersection + smooth) / (union + smooth)
+def iou_np(y_true, y_pred, smooth=None):
+    return micro_metrics_from_arrays(y_true, y_pred)["iou"]
 
 
 def confusion_counts(y_true, y_pred):
-    yt = _mask_array(y_true)
-    yp = _mask_array(y_pred)
-    tp = int(np.logical_and(yt, yp).sum())
-    fp = int(np.logical_and(~yt, yp).sum())
-    fn = int(np.logical_and(yt, ~yp).sum())
-    tn = int(np.logical_and(~yt, ~yp).sum())
-    return tp, fp, fn, tn
+    return confusion_counts_numpy(y_true, y_pred)
 
 
-def confusion_metrics(y_true, y_pred, smooth=1e-6):
+def confusion_metrics(y_true, y_pred, smooth=None):
     tp, fp, fn, tn = confusion_counts(y_true, y_pred)
-    precision = (tp + smooth) / (tp + fp + smooth)
-    recall = (tp + smooth) / (tp + fn + smooth)
-    f1 = (2.0 * precision * recall + smooth) / (precision + recall + smooth)
-    specificity = (tn + smooth) / (tn + fp + smooth)
-    return float(precision), float(recall), float(f1), float(specificity)
+    metrics = metrics_from_confusion_counts(tp, fp, fn, tn)
+    return metrics["precision"], metrics["recall"], metrics["f1"], metrics["specificity"]
 
 
 def _surface_distances(y_true, y_pred):
@@ -100,13 +94,18 @@ def postprocess_mask(mask, min_component_size=32):
 def summarize(rows):
     if not rows:
         return {}
-    summary = {"count": len(rows)}
+    summary = {
+        "count": len(rows),
+        "aggregation": "macro_over_slices_for_diagnostics_only",
+        "primary_result": False,
+    }
     metric_keys = ["dice", "iou", "precision", "recall", "f1", "specificity", "hd95", "asd"]
     for key in metric_keys:
         values = [row[key] for row in rows if row.get(key) is not None and not math.isnan(float(row[key]))]
         if values:
             arr = np.asarray(values, dtype=np.float64)
             summary[key] = {
+                "valid_slice_count": int(arr.size),
                 "mean": float(arr.mean()),
                 "std": float(arr.std()),
                 "median": float(np.median(arr)),
@@ -214,6 +213,7 @@ def find_threshold(y_true, y_prob, optimize_for="f1"):
         metrics = compute_metrics_at_threshold(y_true, y_prob, threshold)
         row = {
             "threshold": float(threshold),
+            "aggregation": PRIMARY_METRIC_AGGREGATION,
             "dice": float(metrics["dice"]),
             "iou": float(metrics["iou"]),
             "precision": float(metrics["precision"]),
@@ -242,6 +242,7 @@ def evaluate_per_sample(y_true, y_prob, threshold, postprocess=False, min_compon
         pred_pixels = float(pred_mask.sum())
         row = {
             "index": i,
+            "aggregation_unit": "selected_2d_slice",
             "true_pixels": true_pixels,
             "pred_pixels": pred_pixels,
             "empty_true": true_pixels == 0,
@@ -273,34 +274,12 @@ def evaluate_per_sample(y_true, y_prob, threshold, postprocess=False, min_compon
     return rows
 
 
-def aggregate_confusion(rows: list[dict]) -> dict:
-    if not rows:
-        return {"count": 0}
-    tp = int(sum(row["tp"] for row in rows))
-    fp = int(sum(row["fp"] for row in rows))
-    fn = int(sum(row["fn"] for row in rows))
-    tn = int(sum(row["tn"] for row in rows))
-    smooth = 1e-6
-    precision = (tp + smooth) / (tp + fp + smooth)
-    recall = (tp + smooth) / (tp + fn + smooth)
-    dice = (2.0 * tp + smooth) / (2.0 * tp + fp + fn + smooth)
-    iou = (tp + smooth) / (tp + fp + fn + smooth)
-    f1 = (2.0 * precision * recall + smooth) / (precision + recall + smooth)
-    specificity = (tn + smooth) / (tn + fp + smooth)
-    accuracy = (tp + tn + smooth) / (tp + tn + fp + fn + smooth)
+def aggregate_confusion(rows: list[dict], population: str = PRIMARY_METRIC_POPULATION) -> dict:
+    metrics = aggregate_confusion_rows(rows)
     return {
-        "count": len(rows),
-        "tp": tp,
-        "fp": fp,
-        "fn": fn,
-        "tn": tn,
-        "dice": float(dice),
-        "iou": float(iou),
-        "precision": float(precision),
-        "recall": float(recall),
-        "f1": float(f1),
-        "specificity": float(specificity),
-        "accuracy": float(accuracy),
+        "aggregation": PRIMARY_METRIC_AGGREGATION,
+        "population": population,
+        **metrics,
     }
 
 
@@ -356,16 +335,25 @@ def main():
 
     tumor_rows = [row for row in rows if not row["empty_true"]]
     empty_rows = [row for row in rows if row["empty_true"]]
-    global_test_metrics = aggregate_confusion(rows)
-    global_tumor_test_metrics = aggregate_confusion(tumor_rows)
+    global_test_metrics = aggregate_confusion(rows, PRIMARY_METRIC_POPULATION)
+    global_tumor_test_metrics = aggregate_confusion(
+        tumor_rows,
+        "all pixels in selected/capped 2D test slices with non-empty ground truth",
+    )
     summary = {
         "backend": "native_windows_torch_cuda" if device.type == "cuda" else "native_windows_torch_cpu",
         "model_path": str(model_path),
         "data_dir": str(data_dir),
         "evaluation_protocol": "selected_slice_2d",
         "protocol_note": "Current arrays are selected/capped 2D slices, not full-volume official BraTS evaluation.",
-        "primary_metric_aggregation": "micro_over_all_test_pixels",
-        "primary_metric_population": "all pixels in all selected/capped 2D test slices",
+        "metric_protocol_version": METRIC_PROTOCOL_VERSION,
+        "metric_protocol_document": "METRICS_PROTOCOL.md",
+        "primary_metric_aggregation": PRIMARY_METRIC_AGGREGATION,
+        "primary_metric_population": PRIMARY_METRIC_POPULATION,
+        "hard_prediction_rule": HARD_PREDICTION_RULE,
+        "secondary_metric_aggregation": "macro_over_slices_for_diagnostics_only",
+        "boundary_metric_aggregation": "macro_over_valid_slices_excluding_undefined_distances",
+        "patient_level_averaging": False,
         "threshold_source": "validation",
         "threshold_metric": args.threshold_metric,
         "selected_threshold": best_threshold,

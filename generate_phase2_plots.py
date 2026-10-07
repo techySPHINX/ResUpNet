@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from resupnet_runtime_paths import configure_runtime_paths
+from segmentation_metrics import METRIC_PROTOCOL_VERSION, PRIMARY_METRIC_AGGREGATION
 
 configure_runtime_paths()
 
@@ -69,7 +70,7 @@ def plot_training_curves(history_path: Path, output_dir: Path, title: str):
     axes[0].legend()
     axes[1].plot(df["epoch"], df["train_dice"], label="train")
     axes[1].plot(df["epoch"], df["val_dice"], label="validation")
-    axes[1].set_title("Dice")
+    axes[1].set_title("Pixel-Micro Hard Dice")
     axes[1].set_xlabel("Epoch")
     axes[1].set_ylabel("Dice")
     axes[1].legend()
@@ -150,7 +151,7 @@ def plot_per_sample_metrics(metrics_path: Path, output_dir: Path):
     fig, ax = plt.subplots(figsize=(12, 6))
     violin_df = df[[m for m in ["dice", "iou", "precision", "recall", "f1"] if m in df.columns]].melt(var_name="metric", value_name="value")
     sns.violinplot(data=violin_df, x="metric", y="value", ax=ax, cut=0)
-    ax.set_title("Metric Violin Plots")
+    ax.set_title("Per-Slice Diagnostic Metric Distributions")
     out = output_dir / "brats_violin_plots.png"
     _save(fig, out)
     plt.close(fig)
@@ -205,6 +206,12 @@ def plot_summary_bars(summary_path: Path, output_dir: Path, title: str):
     summary = _read_json(summary_path)
     if not summary:
         return []
+    aggregation = summary.get("primary_metric_aggregation")
+    if aggregation != PRIMARY_METRIC_AGGREGATION:
+        raise ValueError(
+            f"Refusing to label summary as pixel-micro: expected "
+            f"{PRIMARY_METRIC_AGGREGATION!r}, got {aggregation!r}"
+        )
     plt, _ = _setup_matplotlib()
     primary = summary.get("primary_test_metrics") or summary.get("global_test_metrics", {})
     metrics = ["dice", "iou", "precision", "recall", "f1", "specificity"]
@@ -253,7 +260,13 @@ def main():
     created += plot_per_sample_metrics(eval_dir / "test_per_sample_metrics.csv", output_dir)
     created += plot_summary_bars(eval_dir / "evaluation_summary.json", output_dir, args.title)
 
-    manifest = {"run_dir": str(run_dir), "evaluation_dir": str(eval_dir), "plots": [str(path) for path in created]}
+    manifest = {
+        "run_dir": str(run_dir),
+        "evaluation_dir": str(eval_dir),
+        "metric_protocol_version": METRIC_PROTOCOL_VERSION,
+        "primary_metric_aggregation": PRIMARY_METRIC_AGGREGATION,
+        "plots": [str(path) for path in created],
+    }
     with (output_dir / "plot_manifest.json").open("w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
     print(json.dumps(manifest, indent=2))

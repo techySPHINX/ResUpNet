@@ -57,6 +57,13 @@ Patients: train=875, val=188, test=188
 Patient overlap: none
 ```
 
+## 3.1 Metric Protocol
+
+Read [`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md) before reporting results. The
+canonical result is pixel-micro: pool TP/FP/FN/TN across all selected slices,
+then calculate the metrics once. Do not substitute a mean of slice scores or a
+patient-level mean.
+
 ## 4. Optional Preflight
 
 ```powershell
@@ -143,12 +150,13 @@ summary bar chart
 radar chart
 ```
 
-Trust these together:
+Report these with explicit labels:
 
 ```text
-tumor-row Dice / IoU / recall / precision
-all-row Dice / IoU
-HD95 / ASD
+primary_test_metrics: pooled-pixel micro result
+global_tumor_test_metrics: pooled-pixel micro result on tumor-containing slices
+all/tumor/empty row summaries: per-slice diagnostic distributions
+HD95 / ASD: per-slice boundary diagnostics over valid slices
 empty-true false positives
 ```
 
@@ -167,7 +175,7 @@ regenerate the synchronized validation report and proof plots with:
 .\.venv\Scripts\python.exe generate_phase2_artifact_report.py
 ```
 
-The current validated selected-slice epoch-50 result is:
+The historical artifact records this selected-slice epoch-50 result:
 
 ```text
 Dice: 0.890146
@@ -183,3 +191,8 @@ Report path:
 ```text
 reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 ```
+
+The historical artifacts do not include predictions or confusion counts, so
+their aggregation cannot be independently verified. Do not relabel those values
+as canonical protocol-1.0 micro metrics. Run the active evaluator to create a
+verified `evaluation_summary.json`.

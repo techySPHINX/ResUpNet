@@ -1,12 +1,12 @@
 # ResUpNet Phase 2 Metrics Validation Report
 
-Generated: 2026-06-19 01:09:38
+Generated: 2026-10-07 21:51:45
 
 ## Executive Verdict
 
-The two result artifacts are **validated** under artifact-level checks. The full 50-epoch curve supports a final validation Dice of **0.890146**, IoU of **0.802039**, F1 of **0.891956**, HD95 of **4.8877**, and ASD of **1.5056** at epoch **50**.
+The two result artifacts are **validated** under artifact-level consistency checks. The full 50-epoch curve records a final validation Dice of **0.890146**, IoU of **0.802039**, F1 of **0.891956**, HD95 of **4.8877**, and ASD of **1.5056** at epoch **50**.
 
-This is strong internal selected-slice evidence. It is not, by itself, proof of official BraTS full-volume superiority because the current protocol uses 2D selected slices at 160x160 and binary whole-tumor masks.
+This is historical selected-slice training evidence. The artifacts do not contain predictions or confusion counts, so their aggregation cannot be independently reconstructed or relabeled as verified protocol-1.0 pixel-micro metrics. It is also not proof of official BraTS full-volume superiority.
 
 ## Inputs
 
@@ -27,6 +27,12 @@ This is strong internal selected-slice evidence. It is not, by itself, proof of 
 | image_size | 160x160 |
 | total_epochs | 50 |
 | created_at | 2026-06-17 |
+
+## Metric Protocol
+
+The active pipeline is governed by [`METRICS_PROTOCOL.md`](../../METRICS_PROTOCOL.md): hard metrics are computed from TP/FP/FN/TN pooled over all pixels in all selected slices. Per-slice means are diagnostic only, and patient-level averaging is not used.
+
+Historical artifact aggregation provenance: `not_recorded_in_historical_artifact`.
 
 ## Validation Checks
 
@@ -49,6 +55,7 @@ This is strong internal selected-slice evidence. It is not, by itself, proof of 
 ## Warnings
 
 - training_history_rows.json contains 3 selected epoch rows, not the full 50-epoch curve. Use resupnet_training_curve.json for plots and trend analysis.
+- The historical artifacts do not record metric aggregation or pooled confusion counts. Their values cannot be independently classified as protocol-1.0 pixel-micro metrics.
 
 ## Metric Summary
 
@@ -97,7 +104,7 @@ Final train-minus-validation Dice gap is **0.032801**. That gap is small enough 
 
 ## Why The Present Structure Can Produce Better Results
 
-The current result is plausible because the current native PyTorch structure is materially stronger than the earlier project baseline and many simple 2D U-Net style setups:
+The recorded curve is plausible because the native PyTorch structure is materially stronger than the earlier project baseline and many simple 2D U-Net style setups:
 
 - Four MRI modalities are used together: T1, T1ce, T2, and FLAIR. This gives the model complementary contrast information instead of forcing it to infer tumor extent from a single channel.
 - The split is patient-wise with no overlap, which removes a common leakage failure mode in slice-based medical imaging experiments.
@@ -117,23 +124,24 @@ The current result is plausible because the current native PyTorch structure is 
 | [Residual Transformer ensemble](https://arxiv.org/abs/2308.00128) | Mean Dice | 0.8760 | 0.8901 | Our selected-slice Dice is numerically higher than this mean Dice, but mean-region and WT Dice are not interchangeable. |
 | [BiTr-Unet](https://arxiv.org/abs/2109.12271) | WT Dice | 0.9257 | 0.8901 | Published full-volume result is stronger; use as upper context, not as a paper we beat. |
 
-The strongest defensible statement is: **under the current selected-slice validation protocol, ResUpNet reaches a Dice value that is numerically competitive with several published whole-tumor Dice results and stronger than the project's earlier internal baselines, while using a native PyTorch pipeline tuned for the available system.**
+The strongest defensible statement is: **the historical artifact records selected-slice validation values that are numerically competitive with several published whole-tumor Dice results, but its aggregation is not reconstructable and the protocols differ.**
 
 The strongest statement that is **not** yet defensible is: **this is better than all BraTS papers or official full-volume BraTS state of the art.** BiTr-Unet, for example, reports stronger BraTS 2021 full-volume WT Dice and HD95 than this artifact.
 
 ## Native-System Limitations
 
-- The current artifacts validate a 2D selected-slice protocol, not full 3D patient-volume inference.
+- The historical artifacts record a 2D selected-slice setup, not full 3D patient-volume inference.
 - Input size is 160x160 because of local storage and VRAM constraints; this may lose fine boundary detail compared with 192, 224, or 256 crops.
 - The task is binary whole-tumor segmentation, not full BraTS subregion segmentation for ET, TC, and WT.
 - The artifact-level proof does not include the matching checkpoint, run directory, evaluator output, or test-set summary. Those are required for publication-grade reproducibility.
+- The artifact does not contain pooled confusion counts or per-slice predictions, so its aggregation cannot be verified against `METRICS_PROTOCOL.md`.
 - The validation loss minimum occurs before the final Dice maximum, so final checkpoint selection should explicitly prioritize Dice/IoU if overlap quality is the main objective.
 
 ## Claim Boundary
 
 Safe claim:
 
-> The checked-in Phase 2 result artifacts are internally consistent and show validation Dice improving from 0.120967 to 0.890146 over 50 epochs under the project's BraTS 2021 selected-slice binary whole-tumor protocol.
+> The checked-in Phase 2 result artifacts are internally consistent and record validation Dice improving from 0.120967 to 0.890146 over 50 epochs under a selected-slice binary whole-tumor setup; the aggregation is not recoverable from the artifacts alone.
 
 Safe competitive-positioning claim:
 

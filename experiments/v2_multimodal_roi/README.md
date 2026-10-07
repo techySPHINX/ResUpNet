@@ -37,7 +37,14 @@ val:   tumor=6738,  near_tumor=788,  hard_negative=1498
 test:  tumor=6730,  near_tumor=807,  hard_negative=1497
 ```
 
-## Current Validated Result
+## Canonical Metric Protocol
+
+This experiment follows [`../../METRICS_PROTOCOL.md`](../../METRICS_PROTOCOL.md).
+The primary result is computed after pooling confusion counts across every pixel
+in all selected slices. Per-slice results are diagnostics; metrics are not
+averaged per patient.
+
+## Historical Artifact Result
 
 The current synchronized training artifact is:
 
@@ -45,7 +52,7 @@ The current synchronized training artifact is:
 resupnet_training_curve.json
 ```
 
-Validated epoch-50 selected-slice validation metrics:
+Recorded epoch-50 selected-slice validation metrics:
 
 ```text
 Dice: 0.890146
@@ -61,6 +68,10 @@ The generated proof report and plots are under:
 ```text
 reports\phase2_metrics_validation
 ```
+
+The historical artifact lacks predictions and confusion counts, so its original
+aggregation cannot be independently verified. A new active-pipeline evaluation
+records protocol version `1.0` in `evaluation_summary.json`.
 
 ## Input Strategy
 
@@ -94,5 +105,6 @@ python -B evaluate_phase2_model_torch.py --data-dir experiments\v2_multimodal_ro
 python -B generate_phase2_plots.py --run-dir E:\ResUpNet\runs\resupnet_torch_cuda_8gb --evaluation-dir E:\ResUpNet\runs\resupnet_torch_cuda_8gb\evaluation_tta_post
 ```
 
-Report tumor-row metrics, all-row metrics, and empty-true false positives
-together.
+Report `primary_test_metrics` first. Label tumor-row metrics, per-slice summary
+distributions, boundary metrics, and empty-true false positives as secondary
+diagnostics.

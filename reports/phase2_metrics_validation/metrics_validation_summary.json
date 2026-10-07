@@ -68,7 +68,8 @@
     }
   ],
   "warnings": [
-    "training_history_rows.json contains 3 selected epoch rows, not the full 50-epoch curve. Use resupnet_training_curve.json for plots and trend analysis."
+    "training_history_rows.json contains 3 selected epoch rows, not the full 50-epoch curve. Use resupnet_training_curve.json for plots and trend analysis.",
+    "The historical artifacts do not record metric aggregation or pooled confusion counts. Their values cannot be independently classified as protocol-1.0 pixel-micro metrics."
   ],
   "computed": {
     "final_epoch": 50,
@@ -88,6 +89,8 @@
     "val_loss_reduction_pct": 72.04597362725048,
     "val_hd95_reduction_pct": 70.82614586628625,
     "val_asd_reduction_pct": 74.54606931530007,
+    "metric_aggregation_provenance": "not_recorded_in_historical_artifact",
+    "canonical_metric_protocol": "METRICS_PROTOCOL.md version 1.0",
     "last10_val_dice_mean": 0.878591,
     "last10_val_dice_population_std": 0.006156022936929332,
     "last10_val_dice_delta": 0.017401,
@@ -95,7 +98,7 @@
   },
   "paper_context": [
     {
-      "name": "ResUpNet current artifact",
+      "name": "ResUpNet historical artifact",
       "metric": "Val WT Dice, selected 2D slices",
       "dice": 0.890146,
       "hd95": 4.8877,

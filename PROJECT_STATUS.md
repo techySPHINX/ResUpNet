@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-06-19
+Last updated: 2026-10-07
 
 ## Current State
 
@@ -15,11 +15,21 @@ Output shape: 160x160x1
 Split type: patient-wise
 Patient overlap: none
 Backend: native_windows_torch_cuda
+Primary metric aggregation: micro over all selected-slice pixels
+Patient-level metric averaging: no
 ```
 
-## Current Validated Result Artifact
+## Canonical Metric Protocol
 
-The current result source of truth is:
+The active pipeline follows [`METRICS_PROTOCOL.md`](METRICS_PROTOCOL.md).
+Training, validation-threshold selection, and test evaluation all compute hard
+metrics from pooled pixel-level TP/FP/FN/TN counts. `primary_test_metrics` in
+`evaluation_summary.json` is the canonical result. Per-slice summaries and
+HD95/ASD summaries are diagnostics, not replacements for the primary result.
+
+## Historical Result Artifact
+
+The historical training-curve source is:
 
 ```text
 resupnet_training_curve.json
@@ -31,7 +41,7 @@ Artifact validation report:
 reports\phase2_metrics_validation\RESUPNET_PHASE2_RESULTS_REPORT.md
 ```
 
-Validated selected-slice validation result at epoch `50`:
+Recorded selected-slice validation result at epoch `50`:
 
 ```text
 Dice:        0.890146
@@ -50,8 +60,10 @@ Loss:        0.262043
 rows, but it only contains epochs `1`, `2`, and `50`. Use
 `resupnet_training_curve.json` for trend analysis and generated plots.
 
-This is a validated selected-slice internal result, not an official full-volume
-BraTS leaderboard result.
+These files are internally consistent selected-slice training artifacts, not an
+official full-volume BraTS result. They do not contain the predictions or
+confusion counts needed to independently verify their aggregation, so they are
+not labeled as verified protocol-1.0 pixel-micro results.
 
 ## Dataset Locations
 
